@@ -1,0 +1,6 @@
+{
+    "database": "Oracle",
+    "user": "rm559712",
+    "password": "260986",
+    "dsn": "oracle.fiap.com.br:1521/ORCL"
+}
