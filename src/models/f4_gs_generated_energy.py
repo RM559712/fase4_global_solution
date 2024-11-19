@@ -61,3 +61,62 @@ class F4GsGeneratedEnergy(Database):
         return dict_return
 
 
+    def get_balance_by_month_year(self, str_order: str = 'DESC', str_insert_date_month_year: str = None) -> dict:
+
+        dict_return = {'status': True, 'list_data': []}
+
+        try:
+
+            # <PENDENTE>
+            # Filtro por "mês/ano"
+
+            # > Importante: Por se tratar de um processo específico, a query abaixo será definida em formato SQL
+            str_sql_query = f"""
+            
+                WITH 
+                    GENERATED_ENERGY AS (
+                        SELECT
+                            SUM(GNE_VALUE) AS GNE_TOTAL_VALUE,
+                            TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY') AS GNE_INSERT_DATE_MONTH_YEAR
+                        FROM RM559712.F4_GS_GENERATED_ENERGY
+                        WHERE
+                            GNE_STATUS = 1
+                            -- AND TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY') = '07/2024'
+                        GROUP BY 
+                            TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY')
+                    ),
+                    CONSUMED_ENERGY AS (
+                        SELECT
+                            SUM(CNE_VALUE) AS CNE_TOTAL_VALUE,
+                            TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY') AS CNE_INSERT_DATE_MONTH_YEAR
+                        FROM RM559712.F4_GS_CONSUMED_ENERGY
+                        WHERE
+                            CNE_STATUS = 1
+                            -- AND TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY') = '07/2024'
+                        GROUP BY 
+                            TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY')
+                    )
+                SELECT
+                    COALESCE(GNE.GNE_INSERT_DATE_MONTH_YEAR, CNE.CNE_INSERT_DATE_MONTH_YEAR) AS INSERT_DATE_MONTH_YEAR,
+                    COALESCE(GNE.GNE_TOTAL_VALUE, 0) AS TOTAL_VALUE_GENERATED,
+                    COALESCE(CNE.CNE_TOTAL_VALUE, 0) AS TOTAL_VALUE_CONSUMED,
+                    COALESCE(GNE.GNE_TOTAL_VALUE, 0) - COALESCE(CNE.CNE_TOTAL_VALUE, 0) AS TOTAL_BALANCE
+                FROM
+                    GENERATED_ENERGY GNE
+                FULL OUTER JOIN CONSUMED_ENERGY CNE ON GNE.GNE_INSERT_DATE_MONTH_YEAR = CNE.CNE_INSERT_DATE_MONTH_YEAR
+                ORDER BY
+                    INSERT_DATE_MONTH_YEAR DESC
+            
+            """;
+
+            list_data = self.execute_query(str_sql_query).get_list()
+
+            dict_return['list_data'] = list_data
+
+        except Exception as error:
+
+            dict_return = {'status': False, 'message': error}
+
+        return dict_return
+
+

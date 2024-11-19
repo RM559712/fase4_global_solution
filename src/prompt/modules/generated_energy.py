@@ -6,6 +6,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import matplotlib.pyplot as Pyplot
+import pprint
 import prompt.main as Main
 from custom.helper import Helper
 from models.f4_gs_generated_energy import F4GsGeneratedEnergy
@@ -418,6 +419,8 @@ def action_graphic_month_year():
 
     show_head_module()
 
+    print('Carregando dados, por favor aguarde...')
+
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
     dict_data_by_month_year = object_f4gs_generated_energy.get_data_by_month_year(str_order = 'ASC')
@@ -436,14 +439,25 @@ def action_graphic_month_year():
         list_value.append(dict_data['GNE_TOTAL_VALUE'])
 
     for xi, yi, str_title in zip(list_month_year, list_value, list_value):
-        Pyplot.annotate(str_title, (xi, yi), color = '#1C83EA', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#1C83EA', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
 
     Pyplot.plot(list_month_year, list_value, marker = 'o', color = '#1C83EA')
     Pyplot.title("Energia gerada por mês e ano")
     Pyplot.xlabel("Mês e ano")
     Pyplot.ylabel("Energia gerada em kWh")
     Pyplot.grid(True, linestyle = ':')
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Visualizando gráfico...')
+
     Pyplot.show()
+
+    Main.init_step()
+
+    show_head_module()
 
     print('Gráfico gerado e visualizado com sucesso.')
 
@@ -461,8 +475,14 @@ def action_balance_month_year():
 
     show_head_module()
 
+    object_f4gs_generated_energy = F4GsGeneratedEnergy()
+
+    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(str_order = 'ASC')
+    if dict_balance_by_month_year['status'] == False:
+        raise Exception(dict_balance_by_month_year['message'])
+
     # <PENDENTE>
-    print('Em desenvolvimento...')
+    pprint.pprint(dict_balance_by_month_year)
 
     require_reload()
 

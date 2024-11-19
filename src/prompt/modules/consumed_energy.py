@@ -414,6 +414,8 @@ def action_graphic_month_year():
 
     show_head_module()
 
+    print('Carregando dados, por favor aguarde...')
+
     object_f4gs_consumed_energy = F4GsConsumedEnergy()
 
     dict_data_by_month_year = object_f4gs_consumed_energy.get_data_by_month_year(str_order = 'ASC')
@@ -432,14 +434,25 @@ def action_graphic_month_year():
         list_value.append(dict_data['CNE_TOTAL_VALUE'])
 
     for xi, yi, str_title in zip(list_month_year, list_value, list_value):
-        Pyplot.annotate(str_title, (xi, yi), color = '#E31414', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#E31414', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
 
     Pyplot.plot(list_month_year, list_value, marker = 'o', color = '#E31414')
     Pyplot.title("Energia consumida por mês e ano")
     Pyplot.xlabel("Mês e ano")
     Pyplot.ylabel("Energia consumida em kWh")
     Pyplot.grid(True, linestyle = ':')
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Visualizando gráfico...')
+
     Pyplot.show()
+
+    Main.init_step()
+
+    show_head_module()
 
     print('Gráfico gerado e visualizado com sucesso.')
 
