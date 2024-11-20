@@ -101,14 +101,18 @@ def get_system_menu_options() -> list:
     return [
         {
             'code': 1,
+            'title': 'Localização',
+            'action': ModuleLocation.action_main
+        },{
+            'code': 2,
             'title': 'Energia Limpa',
             'action': ModuleGeneratedEnergy.action_main
         },{
-            'code': 2,
+            'code': 3,
             'title': 'Consumo',
             'action': ModuleConsumedEnergy.action_main
         },{
-            'code': 3,
+            'code': 4,
             'title': 'Sair',
             'action': action_exit
         }
@@ -203,6 +207,12 @@ def init_system():
         print(f'> Ocorreu o seguinte erro: {error}')
         require_reload_system()
 
+
+# ---------------------------------------------------------------------------------------------------------------
+# Métodos referentes a opção "Localização"
+# ---------------------------------------------------------------------------------------------------------------
+
+import prompt.modules.location as ModuleLocation
 
 # ---------------------------------------------------------------------------------------------------------------
 # Métodos referentes a opção "Energia Limpa"

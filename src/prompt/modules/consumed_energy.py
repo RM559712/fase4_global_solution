@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 import matplotlib.pyplot as Pyplot
 import prompt.main as Main
+import prompt.modules.location as ModuleLocation
 from custom.helper import Helper
 from models.f4_gs_consumed_energy import F4GsConsumedEnergy
 
@@ -189,6 +190,46 @@ def validate_id() -> int:
 
 
 """
+Método responsável pela validação do parâmetro "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def validate_location_id(dict_data: dict = {}) -> int:
+
+    bool_is_update = ('GNE_ID' in dict_data and type(dict_data['GNE_ID']) == int)
+
+    str_label = f'Importante: Caso deseje manter a localização atual ( abaixo ), basta ignorar o preenchimento.\n{ModuleLocation.format_data_view_name(dict_data)}\n' if bool_is_update == True else ''
+    str_label += f'Informe a localização: '
+    int_return = input(f'{str_label}')
+
+    while True:
+
+        try:
+
+            if bool_is_update == False and int_return.strip() == '':
+                raise Exception('Deve ser informada uma localização válida.')
+
+            if int_return.strip() != '' and Helper.is_int(int_return) == False: 
+                raise Exception('O conteúdo informado deve ser numérico.')
+
+            if Helper.is_int(int_return) == True:
+
+                get_data_location_by_id(int_return)
+
+            break
+
+        except Exception as error:
+
+            print(f'{error} Tente novamente: ', end = '')
+            int_return = input()
+
+    return str(int_return.strip())
+
+
+"""
 Método responsável pela formatação de visualização do valor do módulo "Consumo"
 
 Arguments:
@@ -231,7 +272,7 @@ def validate_value(dict_data: dict = {}) -> float:
             if ',' in float_return:
                 float_return = float_return.replace(',', '.')
 
-            if Helper.is_float(float_return) == False and Helper.is_int(float_return) == False:
+            if bool_is_update == False and Helper.is_float(float_return) == False and Helper.is_int(float_return) == False:
                 raise Exception('O conteúdo informado deve ser numérico ( ex.: 123, 123.45 ou 123,45 ).')
 
             break
@@ -241,7 +282,7 @@ def validate_value(dict_data: dict = {}) -> float:
             print(f'{error} Tente novamente: ', end = '')
             float_return = input()
 
-    return float(float_return)
+    return float(float_return) if float_return.strip() != '' else None
 
 
 """
@@ -327,6 +368,7 @@ def format_data_view(dict_data: dict = {}, bool_show_id: bool = True, bool_show_
 
         str_return = ''
         str_return += f'- {format_data_view_id(dict_data)} \n' if bool_show_id == True else ''
+        str_return += f'- {ModuleLocation.format_data_view_name(dict_data)} \n'
         str_return += f'- {format_data_view_value(dict_data)} \n'
         str_return += f'- {format_data_view_insert_date(dict_data)} \n' if bool_show_insert_date == True else ''
         str_return += f'- {format_data_view_update_date(dict_data)} \n' if bool_show_update_date == True else ''
@@ -368,6 +410,11 @@ def action_list():
 
     object_f4gs_consumed_energy = F4GsConsumedEnergy()
 
+    object_f4gs_consumed_energy.set_select(['CNE.*', 'LOC.LOC_NAME'])
+    object_f4gs_consumed_energy.set_table('F4_GS_CONSUMED_ENERGY GNE')
+    object_f4gs_consumed_energy.set_join([
+        {'str_type_join': 'INNER JOIN', 'str_table': 'F4_GS_LOCATION LOC', 'str_where': 'LOC.LOC_ID = CNE.CNE_LOC_ID'}
+    ])
     object_f4gs_consumed_energy.set_where([F4GsConsumedEnergy.get_params_to_active_data()])
     object_f4gs_consumed_energy.set_order([{'str_column': 'CNE_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_consumed_energy.get_data().get_list()
@@ -466,6 +513,11 @@ def get_data_by_id(int_cne_id: int = 0) -> dict:
 
     object_f4gs_consumed_energy = F4GsConsumedEnergy()
 
+    object_f4gs_consumed_energy.set_select(['CNE.*', 'LOC.LOC_NAME'])
+    object_f4gs_consumed_energy.set_table('F4_GS_CONSUMED_ENERGY CNE')
+    object_f4gs_consumed_energy.set_join([
+        {'str_type_join': 'INNER JOIN', 'str_table': 'F4_GS_LOCATION LOC', 'str_where': 'LOC.LOC_ID = CNE.CNE_LOC_ID'}
+    ])
     object_f4gs_consumed_energy.set_where([
 
         {'str_column': 'CNE_ID', 'str_type_where': '=', 'value': int_cne_id},
@@ -479,6 +531,17 @@ def get_data_by_id(int_cne_id: int = 0) -> dict:
         raise Exception(f'Nenhum registro foi localizado com o ID {int_cne_id}.')
 
     return object_f4gs_consumed_energy
+
+
+"""
+Método responsável por executar a ação de retorno de dados de uma determinada localização
+"""
+def get_data_location_by_id(loc_id: int = 0) -> dict:
+
+    object_f4gs_location = ModuleLocation.get_data_by_id(loc_id)
+    dict_data = object_f4gs_location.get_one()
+
+    return dict_data
 
 
 # ... Demais parâmetros...
@@ -496,6 +559,10 @@ def action_insert():
     print('Os parâmetros abaixo fazem parte do cadastro principal do consumo.')
     print('')
 
+    int_cne_loc_id = validate_location_id()
+
+    print('')
+
     float_cne_value = validate_value()
 
     Main.loading('Salvando dados, por favor aguarde...')
@@ -510,6 +577,7 @@ def action_insert():
 
     dict_data = {}
 
+    dict_data['CNE_LOC_ID'] = int_cne_loc_id
     dict_data['CNE_VALUE'] = float_cne_value
 
     object_f4gs_consumed_energy = F4GsConsumedEnergy()
@@ -572,6 +640,10 @@ def action_update():
     print('Os parâmetros abaixo fazem parte do cadastro principal do consumo.')
     print('')
 
+    int_cne_loc_id = validate_location_id(dict_data)
+
+    print('')
+
     float_cne_value = validate_value(dict_data)
 
     Main.loading('Salvando dados, por favor aguarde...')
@@ -584,7 +656,11 @@ def action_update():
 
     show_head_module()
 
-    dict_data['CNE_VALUE'] = float_cne_value
+    if int_cne_loc_id.strip() != '':
+        dict_data['CNE_LOC_ID'] = int_cne_loc_id
+
+    if Helper.is_float(float_cne_value) == True:
+        dict_data['CNE_VALUE'] = float_cne_value
 
     object_f4gs_consumed_energy.update(dict_data)
 

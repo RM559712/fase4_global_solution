@@ -9,6 +9,7 @@ import matplotlib.pyplot as Pyplot
 import mplcursors
 import pprint
 import prompt.main as Main
+import prompt.modules.location as ModuleLocation
 from custom.helper import Helper
 from models.f4_gs_generated_energy import F4GsGeneratedEnergy
 
@@ -72,7 +73,7 @@ def get_menu_options() -> list:
             'action': action_graphic_balance_month_year
         },{
             'code': 6,
-            'title': 'Visualizar saldo total',
+            'title': 'Visualizar saldo total de energia gerada',
             'action': action_list_total_balance
         },{
             'code': 7,
@@ -203,6 +204,46 @@ def validate_id() -> int:
 
 
 """
+Método responsável pela validação do parâmetro "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def validate_location_id(dict_data: dict = {}) -> int:
+
+    bool_is_update = ('GNE_ID' in dict_data and type(dict_data['GNE_ID']) == int)
+
+    str_label = f'Importante: Caso deseje manter a localização atual ( abaixo ), basta ignorar o preenchimento.\n{ModuleLocation.format_data_view_name(dict_data)}\n' if bool_is_update == True else ''
+    str_label += f'Informe a localização: '
+    int_return = input(f'{str_label}')
+
+    while True:
+
+        try:
+
+            if bool_is_update == False and int_return.strip() == '':
+                raise Exception('Deve ser informada uma localização válida.')
+
+            if int_return.strip() != '' and Helper.is_int(int_return) == False: 
+                raise Exception('O conteúdo informado deve ser numérico.')
+
+            if Helper.is_int(int_return) == True:
+
+                get_data_location_by_id(int_return)
+
+            break
+
+        except Exception as error:
+
+            print(f'{error} Tente novamente: ', end = '')
+            int_return = input()
+
+    return str(int_return.strip())
+
+
+"""
 Método responsável pela formatação de visualização do valor do módulo "Energia Limpa"
 
 Arguments:
@@ -245,7 +286,7 @@ def validate_value(dict_data: dict = {}) -> float:
             if ',' in float_return:
                 float_return = float_return.replace(',', '.')
 
-            if Helper.is_float(float_return) == False and Helper.is_int(float_return) == False:
+            if bool_is_update == False and Helper.is_float(float_return) == False and Helper.is_int(float_return) == False:
                 raise Exception('O conteúdo informado deve ser numérico ( ex.: 123, 123.45 ou 123,45 ).')
 
             break
@@ -255,7 +296,7 @@ def validate_value(dict_data: dict = {}) -> float:
             print(f'{error} Tente novamente: ', end = '')
             float_return = input()
 
-    return float(float_return)
+    return float(float_return) if float_return.strip() != '' else None
 
 
 """
@@ -405,6 +446,7 @@ def format_data_view(dict_data: dict = {}, bool_show_id: bool = True, bool_show_
 
         str_return = ''
         str_return += f'- {format_data_view_id(dict_data)} \n' if bool_show_id == True else ''
+        str_return += f'- {ModuleLocation.format_data_view_name(dict_data)} \n'
         str_return += f'- {format_data_view_value(dict_data)} \n'
         str_return += f'- {format_data_view_insert_date(dict_data)} \n' if bool_show_insert_date == True else ''
         str_return += f'- {format_data_view_update_date(dict_data)} \n' if bool_show_update_date == True else ''
@@ -469,6 +511,11 @@ def action_list():
 
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
+    object_f4gs_generated_energy.set_select(['GNE.*', 'LOC.LOC_NAME'])
+    object_f4gs_generated_energy.set_table('F4_GS_GENERATED_ENERGY GNE')
+    object_f4gs_generated_energy.set_join([
+        {'str_type_join': 'INNER JOIN', 'str_table': 'F4_GS_LOCATION LOC', 'str_where': 'LOC.LOC_ID = GNE.GNE_LOC_ID'}
+    ])
     object_f4gs_generated_energy.set_where([F4GsGeneratedEnergy.get_params_to_active_data()])
     object_f4gs_generated_energy.set_order([{'str_column': 'GNE_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_generated_energy.get_data().get_list()
@@ -696,6 +743,11 @@ def get_data_by_id(int_gne_id: int = 0) -> dict:
 
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
+    object_f4gs_generated_energy.set_select(['GNE.*', 'LOC.LOC_NAME'])
+    object_f4gs_generated_energy.set_table('F4_GS_GENERATED_ENERGY GNE')
+    object_f4gs_generated_energy.set_join([
+        {'str_type_join': 'INNER JOIN', 'str_table': 'F4_GS_LOCATION LOC', 'str_where': 'LOC.LOC_ID = GNE.GNE_LOC_ID'}
+    ])
     object_f4gs_generated_energy.set_where([
 
         {'str_column': 'GNE_ID', 'str_type_where': '=', 'value': int_gne_id},
@@ -709,6 +761,17 @@ def get_data_by_id(int_gne_id: int = 0) -> dict:
         raise Exception(f'Nenhum registro foi localizado com o ID {int_gne_id}.')
 
     return object_f4gs_generated_energy
+
+
+"""
+Método responsável por executar a ação de retorno de dados de uma determinada localização
+"""
+def get_data_location_by_id(loc_id: int = 0) -> dict:
+
+    object_f4gs_location = ModuleLocation.get_data_by_id(loc_id)
+    dict_data = object_f4gs_location.get_one()
+
+    return dict_data
 
 
 # ... Demais parâmetros...
@@ -726,6 +789,10 @@ def action_insert():
     print('Os parâmetros abaixo fazem parte do cadastro principal da energia gerada.')
     print('')
 
+    int_gne_loc_id = validate_location_id()
+
+    print('')
+
     float_gne_value = validate_value()
 
     Main.loading('Salvando dados, por favor aguarde...')
@@ -740,6 +807,7 @@ def action_insert():
 
     dict_data = {}
 
+    dict_data['GNE_LOC_ID'] = int_gne_loc_id
     dict_data['GNE_VALUE'] = float_gne_value
 
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
@@ -802,6 +870,10 @@ def action_update():
     print('Os parâmetros abaixo fazem parte do cadastro principal da energia.')
     print('')
 
+    int_gne_loc_id = validate_location_id(dict_data)
+
+    print('')
+
     float_gne_value = validate_value(dict_data)
 
     Main.loading('Salvando dados, por favor aguarde...')
@@ -814,7 +886,11 @@ def action_update():
 
     show_head_module()
 
-    dict_data['GNE_VALUE'] = float_gne_value
+    if int_gne_loc_id.strip() != '':
+        dict_data['GNE_LOC_ID'] = int_gne_loc_id
+
+    if Helper.is_float(float_gne_value) == True:
+        dict_data['GNE_VALUE'] = float_gne_value
 
     object_f4gs_generated_energy.update(dict_data)
 

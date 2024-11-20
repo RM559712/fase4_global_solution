@@ -34,6 +34,7 @@ Essa versão possui funcionalidades que visam administrar o controle de consumo 
 
 Algumas informações sobre os módulos dessa versão:
 
+- <strong>Módulo "Localização"</strong>: <i>Pendente</i>;
 - <strong>Módulo "Energia Limpa"</strong>: <i>Pendente</i>;
 - <strong>Módulo "Consumo"</strong>: <i>Pendente</i>;
 
@@ -49,9 +50,11 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
     - Arquivo "params.json": Configurações do sistema em geral.
 
 3. <b>document</b>: Diretório para armazenamento de documentos relacionados ao sistema.
+    - <i>Pendente</i>
 
 4. <b>scripts</b>: Diretório para armazenamento de scripts.
     - Diretório "oracle": Diretório para armazenamento de scripts do banco de dados Oracle.
+    - <i>Pendente</i>
 
 5. <b>src</b>: Diretório para armazenamento de código fonte do sistema em Python.
     - Diretório "custom": Diretório para armazenamento <i>classes/componentes</i> auxiliares do sistema.
