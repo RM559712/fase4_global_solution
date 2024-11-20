@@ -30,11 +30,11 @@ Grupo de número <b>24</b> formado pelos integrantes mencionados abaixo.
 
 <b>Referência</b>: https://on.fiap.com.br/mod/assign/view.php?id=445641
 
-Essa versão possui funcionalidades que visam administrar o controle de consumo de energia versus a geração de energia limpa
+Essa versão possui funcionalidades que auxiliam na administração de energia limpa gerada.
 
 Algumas informações sobre os módulos dessa versão:
 
-- <strong>Módulo "Localização"</strong>: <i>Pendente</i>;
+- <strong>Módulo "Localização"</strong>: Permite que sejam cadastradas as localizações que deverão ser administradas, como por exemplo residências, hotéis, prédios comerciais, empresas, etc.;
 - <strong>Módulo "Energia Limpa"</strong>: <i>Pendente</i>;
 - <strong>Módulo "Consumo"</strong>: <i>Pendente</i>;
 

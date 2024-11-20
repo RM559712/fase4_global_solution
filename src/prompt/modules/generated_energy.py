@@ -240,7 +240,7 @@ def validate_location_id(dict_data: dict = {}) -> int:
             print(f'{error} Tente novamente: ', end = '')
             int_return = input()
 
-    return str(int_return.strip())
+    return int(int_return) if int_return.strip() != '' else None
 
 
 """
@@ -509,6 +509,21 @@ def action_list():
 
     show_head_module()
 
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_gne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
     object_f4gs_generated_energy.set_select(['GNE.*', 'LOC.LOC_NAME'])
@@ -516,7 +531,10 @@ def action_list():
     object_f4gs_generated_energy.set_join([
         {'str_type_join': 'INNER JOIN', 'str_table': 'F4_GS_LOCATION LOC', 'str_where': 'LOC.LOC_ID = GNE.GNE_LOC_ID'}
     ])
-    object_f4gs_generated_energy.set_where([F4GsGeneratedEnergy.get_params_to_active_data()])
+    object_f4gs_generated_energy.set_where([
+        F4GsGeneratedEnergy.get_params_to_active_data(),
+        F4GsGeneratedEnergy.get_params_to_location(int_gne_loc_id)
+    ])
     object_f4gs_generated_energy.set_order([{'str_column': 'GNE_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_generated_energy.get_data().get_list()
 
@@ -538,9 +556,24 @@ def action_list_month_year():
 
     show_head_module()
 
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_gne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
-    dict_data_by_month_year = object_f4gs_generated_energy.get_data_by_month_year()
+    dict_data_by_month_year = object_f4gs_generated_energy.get_data_by_month_year(int_gne_loc_id = int_gne_loc_id)
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
 
@@ -562,11 +595,24 @@ def action_graphic_month_year():
 
     show_head_module()
 
-    print('Carregando dados, por favor aguarde...')
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_gne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
 
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
-    dict_data_by_month_year = object_f4gs_generated_energy.get_data_by_month_year(str_order = 'ASC')
+    dict_data_by_month_year = object_f4gs_generated_energy.get_data_by_month_year(str_order = 'ASC', int_gne_loc_id = int_gne_loc_id)
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
 
@@ -618,9 +664,24 @@ def action_list_balance_month_year():
 
     show_head_module()
 
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_gne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
-    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(str_order = 'ASC')
+    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(str_order = 'ASC', int_gne_loc_id = int_gne_loc_id)
     if dict_balance_by_month_year['status'] == False:
         raise Exception(dict_balance_by_month_year['message'])
 
@@ -645,11 +706,24 @@ def action_graphic_balance_month_year():
 
     show_head_module()
 
-    print('Carregando dados, por favor aguarde...')
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_gne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
 
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
-    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(str_order = 'ASC')
+    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(str_order = 'ASC', int_gne_loc_id = int_gne_loc_id)
     if dict_balance_by_month_year['status'] == False:
         raise Exception(dict_balance_by_month_year['message'])
 
@@ -720,9 +794,24 @@ def action_list_total_balance():
 
     show_head_module()
 
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_gne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Filtrando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
-    dict_total_balance = object_f4gs_generated_energy.get_total_balance()
+    dict_total_balance = object_f4gs_generated_energy.get_total_balance(int_gne_loc_id = int_gne_loc_id)
     if dict_total_balance['status'] == False:
         raise Exception(dict_total_balance['message'])
 
@@ -886,7 +975,7 @@ def action_update():
 
     show_head_module()
 
-    if int_gne_loc_id.strip() != '':
+    if Helper.is_int(int_gne_loc_id) == True:
         dict_data['GNE_LOC_ID'] = int_gne_loc_id
 
     if Helper.is_float(float_gne_value) == True:

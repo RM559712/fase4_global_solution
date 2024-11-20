@@ -18,6 +18,12 @@ class F4GsGeneratedEnergy(Database):
         return {'str_column': 'GNE_STATUS', 'str_type_where': '=', 'value': Database.STATUS_ACTIVE}
 
 
+    @staticmethod
+    def get_params_to_location(int_gne_loc_id: int = None) -> dict:
+
+        return {'str_column': 'GNE_LOC_ID', 'str_type_where': '=', 'value': int_gne_loc_id}
+
+
     def validate_exists_data(self) -> bool:
 
         self.set_select([f'COUNT({self.primary_key_column}) as LENGTH'])
@@ -27,7 +33,7 @@ class F4GsGeneratedEnergy(Database):
         return False if len(list_data) == 0 or 'LENGTH' not in list_data[0] or list_data[0]['LENGTH'] == 0 else True
 
 
-    def get_data_by_month_year(self, str_order: str = 'DESC', str_gne_insert_date_month_year: str = None) -> dict:
+    def get_data_by_month_year(self, str_order: str = 'DESC', str_gne_insert_date_month_year: str = None, int_gne_loc_id: int = None) -> dict:
 
         dict_return = {'status': True, 'list_data': []}
 
@@ -41,6 +47,9 @@ class F4GsGeneratedEnergy(Database):
 
             if type(str_gne_insert_date_month_year) != None and type(str_gne_insert_date_month_year) == str:
                 list_where.append({'str_column': "TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY')", 'str_type_where': '=', 'value': str_gne_insert_date_month_year})
+
+            if type(int_gne_loc_id) != None and Helper.is_int(int_gne_loc_id) == True:
+                list_where.append(self.get_params_to_location(int_gne_loc_id))
 
             self.set_where(list_where)
 
@@ -61,7 +70,7 @@ class F4GsGeneratedEnergy(Database):
         return dict_return
 
 
-    def get_balance_by_month_year(self, str_order: str = 'DESC', str_insert_date_month_year: str = None) -> dict:
+    def get_balance_by_month_year(self, str_order: str = 'DESC', str_insert_date_month_year: str = None, int_gne_loc_id: int = None) -> dict:
 
         dict_return = {'status': True, 'list_data': []}
 
@@ -73,6 +82,13 @@ class F4GsGeneratedEnergy(Database):
             if type(str_insert_date_month_year) != None and type(str_insert_date_month_year) == str:
                 str_sql_query_filter_month_year_gne = f"AND TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY') = '{str_insert_date_month_year}'"
                 str_sql_query_filter_month_year_cne = f"AND TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY') = '{str_insert_date_month_year}'"
+
+            str_sql_query_filter_location_gne = ''
+            str_sql_query_filter_location_cne = ''
+
+            if type(int_gne_loc_id) != None and Helper.is_int(int_gne_loc_id) == True:
+                str_sql_query_filter_location_gne = f"AND GNE_LOC_ID = {int_gne_loc_id}"
+                str_sql_query_filter_location_cne = f"AND CNE_LOC_ID = {int_gne_loc_id}"
 
             # > Importante: Por se tratar de um processo específico, a query abaixo será definida em formato SQL
             str_sql_query = f"""
@@ -86,6 +102,7 @@ class F4GsGeneratedEnergy(Database):
                         WHERE
                             GNE_STATUS = {self.STATUS_ACTIVE}
                             {str_sql_query_filter_month_year_gne}
+                            {str_sql_query_filter_location_gne}
                         GROUP BY 
                             TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY')
                     ),
@@ -97,6 +114,7 @@ class F4GsGeneratedEnergy(Database):
                         WHERE
                             CNE_STATUS = {self.STATUS_ACTIVE}
                             {str_sql_query_filter_month_year_cne}
+                            {str_sql_query_filter_location_cne}
                         GROUP BY 
                             TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY')
                     )
@@ -124,11 +142,18 @@ class F4GsGeneratedEnergy(Database):
         return dict_return
 
 
-    def get_total_balance(self) -> dict:
+    def get_total_balance(self, int_gne_loc_id: int = None) -> dict:
 
         dict_return = {'status': True, 'list_data': []}
 
         try:
+
+            str_sql_query_filter_location_gne = ''
+            str_sql_query_filter_location_cne = ''
+
+            if type(int_gne_loc_id) != None and Helper.is_int(int_gne_loc_id) == True:
+                str_sql_query_filter_location_gne = f"AND GNE.GNE_LOC_ID = {int_gne_loc_id}"
+                str_sql_query_filter_location_cne = f"AND CNE.CNE_LOC_ID = {int_gne_loc_id}"
 
             # > Importante: Por se tratar de um processo específico, a query abaixo será definida em formato SQL
             str_sql_query = f"""
@@ -136,9 +161,13 @@ class F4GsGeneratedEnergy(Database):
                 SELECT
                     NVL(SUM(GNE.GNE_VALUE), 0) - NVL(SUM(CNE.CNE_VALUE), 0) AS TOTAL_BALANCE
                 FROM F4_GS_GENERATED_ENERGY GNE
-                FULL OUTER JOIN F4_GS_CONSUMED_ENERGY CNE ON GNE.GNE_ID = CNE.CNE_ID AND CNE.CNE_STATUS = {self.STATUS_ACTIVE}
+                FULL OUTER JOIN F4_GS_CONSUMED_ENERGY CNE ON 
+                    GNE.GNE_ID = CNE.CNE_ID 
+                    AND CNE.CNE_STATUS = {self.STATUS_ACTIVE}
+                    {str_sql_query_filter_location_cne}
                 WHERE
                     GNE.GNE_STATUS = {self.STATUS_ACTIVE}
+                    {str_sql_query_filter_location_gne}
 
             """;
 

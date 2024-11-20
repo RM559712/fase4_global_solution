@@ -199,7 +199,7 @@ Return: str
 """
 def validate_location_id(dict_data: dict = {}) -> int:
 
-    bool_is_update = ('GNE_ID' in dict_data and type(dict_data['GNE_ID']) == int)
+    bool_is_update = ('CNE_ID' in dict_data and type(dict_data['CNE_ID']) == int)
 
     str_label = f'Importante: Caso deseje manter a localização atual ( abaixo ), basta ignorar o preenchimento.\n{ModuleLocation.format_data_view_name(dict_data)}\n' if bool_is_update == True else ''
     str_label += f'Informe a localização: '
@@ -226,7 +226,7 @@ def validate_location_id(dict_data: dict = {}) -> int:
             print(f'{error} Tente novamente: ', end = '')
             int_return = input()
 
-    return str(int_return.strip())
+    return int(int_return) if int_return.strip() != '' else None
 
 
 """
@@ -408,14 +408,32 @@ def action_list():
 
     show_head_module()
 
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_cne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
     object_f4gs_consumed_energy = F4GsConsumedEnergy()
 
     object_f4gs_consumed_energy.set_select(['CNE.*', 'LOC.LOC_NAME'])
-    object_f4gs_consumed_energy.set_table('F4_GS_CONSUMED_ENERGY GNE')
+    object_f4gs_consumed_energy.set_table('F4_GS_CONSUMED_ENERGY CNE')
     object_f4gs_consumed_energy.set_join([
         {'str_type_join': 'INNER JOIN', 'str_table': 'F4_GS_LOCATION LOC', 'str_where': 'LOC.LOC_ID = CNE.CNE_LOC_ID'}
     ])
-    object_f4gs_consumed_energy.set_where([F4GsConsumedEnergy.get_params_to_active_data()])
+    object_f4gs_consumed_energy.set_where([
+        F4GsConsumedEnergy.get_params_to_active_data(),
+        F4GsConsumedEnergy.get_params_to_location(int_cne_loc_id)
+    ])
     object_f4gs_consumed_energy.set_order([{'str_column': 'CNE_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_consumed_energy.get_data().get_list()
 
@@ -437,9 +455,24 @@ def action_list_month_year():
 
     show_head_module()
 
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_cne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
     object_f4gs_consumed_energy = F4GsConsumedEnergy()
 
-    dict_data_by_month_year = object_f4gs_consumed_energy.get_data_by_month_year()
+    dict_data_by_month_year = object_f4gs_consumed_energy.get_data_by_month_year(int_cne_loc_id = int_cne_loc_id)
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
 
@@ -461,11 +494,24 @@ def action_graphic_month_year():
 
     show_head_module()
 
-    print('Carregando dados, por favor aguarde...')
+    print('Os dados serão exibidos de acordo com a localização informada.')
+    print('')
+
+    int_cne_loc_id = validate_location_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
 
     object_f4gs_consumed_energy = F4GsConsumedEnergy()
 
-    dict_data_by_month_year = object_f4gs_consumed_energy.get_data_by_month_year(str_order = 'ASC')
+    dict_data_by_month_year = object_f4gs_consumed_energy.get_data_by_month_year(str_order = 'ASC', int_cne_loc_id = int_cne_loc_id)
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
 
@@ -656,7 +702,7 @@ def action_update():
 
     show_head_module()
 
-    if int_cne_loc_id.strip() != '':
+    if Helper.is_int(int_cne_loc_id) == True:
         dict_data['CNE_LOC_ID'] = int_cne_loc_id
 
     if Helper.is_float(float_cne_value) == True:

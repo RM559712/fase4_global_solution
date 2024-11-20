@@ -18,6 +18,12 @@ class F4GsConsumedEnergy(Database):
         return {'str_column': 'CNE_STATUS', 'str_type_where': '=', 'value': Database.STATUS_ACTIVE}
 
 
+    @staticmethod
+    def get_params_to_location(int_cne_loc_id: int = None) -> dict:
+
+        return {'str_column': 'CNE_LOC_ID', 'str_type_where': '=', 'value': int_cne_loc_id}
+
+
     def validate_exists_data(self) -> bool:
 
         self.set_select([f'COUNT({self.primary_key_column}) as LENGTH'])
@@ -27,7 +33,7 @@ class F4GsConsumedEnergy(Database):
         return False if len(list_data) == 0 or 'LENGTH' not in list_data[0] or list_data[0]['LENGTH'] == 0 else True
 
 
-    def get_data_by_month_year(self, str_order: str = 'DESC', str_cne_insert_date_month_year: str = None) -> dict:
+    def get_data_by_month_year(self, str_order: str = 'DESC', str_cne_insert_date_month_year: str = None, int_cne_loc_id: int = None) -> dict:
 
         dict_return = {'status': True, 'list_data': []}
 
@@ -41,6 +47,9 @@ class F4GsConsumedEnergy(Database):
 
             if type(str_cne_insert_date_month_year) != None and type(str_cne_insert_date_month_year) == str:
                 list_where.append({'str_column': "TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY')", 'str_type_where': '=', 'value': str_cne_insert_date_month_year})
+
+            if type(int_cne_loc_id) != None and Helper.is_int(int_cne_loc_id) == True:
+                list_where.append(self.get_params_to_location(int_cne_loc_id))
 
             self.set_where(list_where)
 
