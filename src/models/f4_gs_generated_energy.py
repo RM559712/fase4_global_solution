@@ -67,8 +67,12 @@ class F4GsGeneratedEnergy(Database):
 
         try:
 
-            # <PENDENTE>
-            # Filtro por "mês/ano"
+            str_sql_query_filter_month_year_gne = ''
+            str_sql_query_filter_month_year_cne = ''
+
+            if type(str_insert_date_month_year) != None and type(str_insert_date_month_year) == str:
+                str_sql_query_filter_month_year_gne = f"AND TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY') = '{str_insert_date_month_year}'"
+                str_sql_query_filter_month_year_cne = f"AND TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY') = '{str_insert_date_month_year}'"
 
             # > Importante: Por se tratar de um processo específico, a query abaixo será definida em formato SQL
             str_sql_query = f"""
@@ -78,10 +82,10 @@ class F4GsGeneratedEnergy(Database):
                         SELECT
                             SUM(GNE_VALUE) AS GNE_TOTAL_VALUE,
                             TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY') AS GNE_INSERT_DATE_MONTH_YEAR
-                        FROM RM559712.F4_GS_GENERATED_ENERGY
+                        FROM F4_GS_GENERATED_ENERGY
                         WHERE
-                            GNE_STATUS = 1
-                            -- AND TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY') = '07/2024'
+                            GNE_STATUS = {self.STATUS_ACTIVE}
+                            {str_sql_query_filter_month_year_gne}
                         GROUP BY 
                             TO_CHAR(GNE_INSERT_DATE, 'MM/YYYY')
                     ),
@@ -89,10 +93,10 @@ class F4GsGeneratedEnergy(Database):
                         SELECT
                             SUM(CNE_VALUE) AS CNE_TOTAL_VALUE,
                             TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY') AS CNE_INSERT_DATE_MONTH_YEAR
-                        FROM RM559712.F4_GS_CONSUMED_ENERGY
+                        FROM F4_GS_CONSUMED_ENERGY
                         WHERE
-                            CNE_STATUS = 1
-                            -- AND TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY') = '07/2024'
+                            CNE_STATUS = {self.STATUS_ACTIVE}
+                            {str_sql_query_filter_month_year_cne}
                         GROUP BY 
                             TO_CHAR(CNE_INSERT_DATE, 'MM/YYYY')
                     )
@@ -105,8 +109,37 @@ class F4GsGeneratedEnergy(Database):
                     GENERATED_ENERGY GNE
                 FULL OUTER JOIN CONSUMED_ENERGY CNE ON GNE.GNE_INSERT_DATE_MONTH_YEAR = CNE.CNE_INSERT_DATE_MONTH_YEAR
                 ORDER BY
-                    INSERT_DATE_MONTH_YEAR DESC
+                    INSERT_DATE_MONTH_YEAR {str_order}
             
+            """;
+
+            list_data = self.execute_query(str_sql_query).get_list()
+
+            dict_return['list_data'] = list_data
+
+        except Exception as error:
+
+            dict_return = {'status': False, 'message': error}
+
+        return dict_return
+
+
+    def get_total_balance(self) -> dict:
+
+        dict_return = {'status': True, 'list_data': []}
+
+        try:
+
+            # > Importante: Por se tratar de um processo específico, a query abaixo será definida em formato SQL
+            str_sql_query = f"""
+
+                SELECT
+                    NVL(SUM(GNE.GNE_VALUE), 0) - NVL(SUM(CNE.CNE_VALUE), 0) AS TOTAL_BALANCE
+                FROM F4_GS_GENERATED_ENERGY GNE
+                FULL OUTER JOIN F4_GS_CONSUMED_ENERGY CNE ON GNE.GNE_ID = CNE.CNE_ID AND CNE.CNE_STATUS = {self.STATUS_ACTIVE}
+                WHERE
+                    GNE.GNE_STATUS = {self.STATUS_ACTIVE}
+
             """;
 
             list_data = self.execute_query(str_sql_query).get_list()

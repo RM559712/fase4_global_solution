@@ -6,6 +6,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import matplotlib.pyplot as Pyplot
+import mplcursors
 import pprint
 import prompt.main as Main
 from custom.helper import Helper
@@ -64,21 +65,29 @@ def get_menu_options() -> list:
         },{
             'code': 4,
             'title': 'Visualizar saldo por mês e ano',
-            'action': action_balance_month_year
+            'action': action_list_balance_month_year
         },{
             'code': 5,
+            'title': 'Visualizar gráfico com saldo por mês e ano',
+            'action': action_graphic_balance_month_year
+        },{
+            'code': 6,
+            'title': 'Visualizar saldo total',
+            'action': action_list_total_balance
+        },{
+            'code': 7,
             'title': 'Cadastrar energia gerada',
             'action': action_insert
         },{
-            'code': 6,
+            'code': 8,
             'title': 'Editar energia gerada',
             'action': action_update
         },{
-            'code': 7,
+            'code': 9,
             'title': 'Excluir energia gerada',
             'action': action_delete
         },{
-            'code': 8,
+            'code': 10,
             'title': 'Voltar ao menu principal',
             'action': Main.init_system
         }
@@ -314,6 +323,70 @@ def format_data_view_insert_date_month_year(dict_data: dict = {}) -> str:
 
 
 """
+Método responsável pela formatação de visualização do mês e ano do módulo "Energia Limpa"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_insert_balance_date_month_year(dict_data: dict = {}) -> str:
+
+    str_return = 'Mês e ano: '
+    str_return += f'{dict_data['INSERT_DATE_MONTH_YEAR']}' if 'INSERT_DATE_MONTH_YEAR' in dict_data and type(dict_data['INSERT_DATE_MONTH_YEAR']) != None else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do valor total de energia gerada do módulo "Energia Limpa"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_balance_total_value_generated(dict_data: dict = {}) -> str:
+
+    str_return = 'Valor total de energia gerada: '
+    str_return += f'{dict_data['TOTAL_VALUE_GENERATED']} kWh' if 'TOTAL_VALUE_GENERATED' in dict_data and type(dict_data['TOTAL_VALUE_GENERATED']) != None and Helper.is_float(dict_data['TOTAL_VALUE_GENERATED']) == True else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do valor total de energia consumida do módulo "Energia Limpa"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_balance_total_value_consumed(dict_data: dict = {}) -> str:
+
+    str_return = 'Valor total de energia consumida: '
+    str_return += f'{dict_data['TOTAL_VALUE_CONSUMED']} kWh' if 'TOTAL_VALUE_CONSUMED' in dict_data and type(dict_data['TOTAL_VALUE_CONSUMED']) != None and Helper.is_float(dict_data['TOTAL_VALUE_CONSUMED']) == True else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do valor total de saldo do módulo "Energia Limpa"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_balance_total_value_balance(dict_data: dict = {}) -> str:
+
+    str_return = 'Valor total de saldo de energia: '
+    str_return += f'{dict_data['TOTAL_BALANCE']} kWh' if 'TOTAL_BALANCE' in dict_data and type(dict_data['TOTAL_BALANCE']) != None and Helper.is_float(dict_data['TOTAL_BALANCE']) == True else 'N/I'
+
+    return str_return
+
+
+"""
 Método responsável pela formatação de visualização de dados do módulo "Energia Limpa"
 
 Arguments:
@@ -356,6 +429,29 @@ def format_data_view_month_year(dict_data: dict = {}) -> str:
         str_return = ''
         str_return += f'- {format_data_view_total_value(dict_data)} \n'
         str_return += f'- {format_data_view_insert_date_month_year(dict_data)} \n'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização de dados de balanço agrupados por mês e ano do módulo "Energia Limpa"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_balance_month_year(dict_data: dict = {}) -> str:
+
+    str_return = None
+
+    if len(dict_data) > 0:
+
+        str_return = ''
+        str_return += f'- {format_data_view_insert_balance_date_month_year(dict_data)} \n'
+        str_return += f'- {format_data_view_balance_total_value_generated(dict_data)} \n'
+        str_return += f'- {format_data_view_balance_total_value_consumed(dict_data)} \n'
+        str_return += f'- {format_data_view_balance_total_value_balance(dict_data)} \n'
 
     return str_return
 
@@ -467,7 +563,7 @@ def action_graphic_month_year():
 """
 Método responsável pela exibição de saldo por mês e ano do módulo "Energia Limpa"
 """
-def action_balance_month_year():
+def action_list_balance_month_year():
 
     Main.init_step()
 
@@ -481,8 +577,114 @@ def action_balance_month_year():
     if dict_balance_by_month_year['status'] == False:
         raise Exception(dict_balance_by_month_year['message'])
 
-    # <PENDENTE>
-    pprint.pprint(dict_balance_by_month_year)
+    if len(dict_balance_by_month_year['list_data']) == 0:
+        raise Exception('Não existem energias cadastradas para exibição de saldo.')
+
+    for dict_data in dict_balance_by_month_year['list_data']:
+
+        print(format_data_view_balance_month_year(dict_data))
+
+    require_reload()
+
+
+"""
+Método responsável pela exibição de gráficos de saldo por mês e ano do módulo "Energia Limpa"
+"""
+def action_graphic_balance_month_year():
+
+    Main.init_step()
+
+    validate_exists_data()
+
+    show_head_module()
+
+    print('Carregando dados, por favor aguarde...')
+
+    object_f4gs_generated_energy = F4GsGeneratedEnergy()
+
+    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(str_order = 'ASC')
+    if dict_balance_by_month_year['status'] == False:
+        raise Exception(dict_balance_by_month_year['message'])
+
+    list_month_year = []
+    list_total_value_generated = []
+    list_total_value_consumed = []
+    list_total_value_balance = []
+
+    """if len(dict_balance_by_month_year['list_data']) == 0:
+        raise Exception('Não existem energias cadastradas para geração do gráfico.')"""
+
+    for dict_data in dict_balance_by_month_year['list_data']:
+
+        list_month_year.append(dict_data['INSERT_DATE_MONTH_YEAR'])
+        list_total_value_generated.append(dict_data['TOTAL_VALUE_GENERATED'])
+        list_total_value_consumed.append(dict_data['TOTAL_VALUE_CONSUMED'])
+        list_total_value_balance.append(dict_data['TOTAL_BALANCE'])
+
+    """for xi, yi, str_title in zip(list_month_year, list_total_value_generated, list_total_value_generated):
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#1C83EA', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+    
+    for xi, yi, str_title in zip(list_month_year, list_total_value_consumed, list_total_value_consumed):
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#E31414', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+    
+    for xi, yi, str_title in zip(list_month_year, list_total_value_balance, list_total_value_balance):
+        str_color = '#3FBF3F' if str_title > 0 else '#E31414'
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = str_color, fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')"""
+
+    object_line1, = Pyplot.plot(list_month_year, list_total_value_generated, marker = 'o', label = 'Valor total gerado', color = '#1C83EA', markevery = 1)
+    object_line2, = Pyplot.plot(list_month_year, list_total_value_consumed, marker = 'o', label = 'Valor total consumido', color = '#E31414', markevery = 1)
+    object_line3, = Pyplot.plot(list_month_year, list_total_value_balance, marker = 'o', label = 'Valor total de saldo', color = '#3FBF3F', markevery = 1)
+    Pyplot.title("Saldo de energia gerada por mês e ano")
+    Pyplot.xlabel("Mês e ano")
+    Pyplot.ylabel("Energia exibida em kWh")
+    Pyplot.legend()
+    Pyplot.grid(True, linestyle = ':')
+
+    cursor = mplcursors.cursor([object_line1, object_line2, object_line3], hover = True)
+    cursor.connect('add', lambda sel: sel.annotation.set_text(
+        f'{sel.target[1]:.2f} kWh'
+    ))
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Visualizando gráfico...')
+
+    Pyplot.show()
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Gráfico gerado e visualizado com sucesso.')
+
+    require_reload()
+
+
+"""
+Método responsável pela exibição do saldo total do módulo "Energia Limpa"
+"""
+def action_list_total_balance():
+
+    Main.init_step()
+
+    validate_exists_data()
+
+    show_head_module()
+
+    object_f4gs_generated_energy = F4GsGeneratedEnergy()
+
+    dict_total_balance = object_f4gs_generated_energy.get_total_balance()
+    if dict_total_balance['status'] == False:
+        raise Exception(dict_total_balance['message'])
+
+    if len(dict_total_balance['list_data']) == 0:
+        raise Exception('Não existem energias cadastradas para exibição de saldo.')
+
+    for dict_data in dict_total_balance['list_data']:
+
+        print(f'{format_data_view_balance_total_value_balance(dict_data)}')
 
     require_reload()
 
