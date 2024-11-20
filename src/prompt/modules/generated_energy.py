@@ -53,23 +53,23 @@ def get_menu_options() -> list:
     return [
         {
             'code': 1,
-            'title': 'Visualizar energias geradas',
+            'title': 'Visualizar energia gerada',
             'action': action_list
         },{
             'code': 2,
-            'title': 'Visualizar energias geradas por mês e ano',
+            'title': 'Visualizar energia gerada por mês e ano',
             'action': action_list_month_year
         },{
             'code': 3,
-            'title': 'Visualizar gráfico com energias geradas por mês e ano',
+            'title': 'Visualizar gráfico de energia gerada por mês e ano',
             'action': action_graphic_month_year
         },{
             'code': 4,
-            'title': 'Visualizar saldo por mês e ano',
+            'title': 'Visualizar saldo de energia gerada por mês e ano',
             'action': action_list_balance_month_year
         },{
             'code': 5,
-            'title': 'Visualizar gráfico com saldo por mês e ano',
+            'title': 'Visualizar gráfico com saldo de energia gerada por mês e ano',
             'action': action_graphic_balance_month_year
         },{
             'code': 6,

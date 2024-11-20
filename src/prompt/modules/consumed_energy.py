@@ -51,27 +51,27 @@ def get_menu_options() -> list:
     return [
         {
             'code': 1,
-            'title': 'Visualizar consumos',
+            'title': 'Visualizar consumo de energia',
             'action': action_list
         },{
             'code': 2,
-            'title': 'Visualizar consumos por mês e ano',
+            'title': 'Visualizar consumo de energia por mês e ano',
             'action': action_list_month_year
         },{
             'code': 3,
-            'title': 'Visualizar gráfico com consumos por mês e ano',
+            'title': 'Visualizar gráfico com consumo de energia por mês e ano',
             'action': action_graphic_month_year
         },{
             'code': 4,
-            'title': 'Cadastrar consumo',
+            'title': 'Cadastrar consumo de energia',
             'action': action_insert
         },{
             'code': 5,
-            'title': 'Editar consumo',
+            'title': 'Editar consumo de energia',
             'action': action_update
         },{
             'code': 6,
-            'title': 'Excluir consumo',
+            'title': 'Excluir consumo de energia',
             'action': action_delete
         },{
             'code': 7,

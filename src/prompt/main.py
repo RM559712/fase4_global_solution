@@ -109,7 +109,7 @@ def get_system_menu_options() -> list:
             'action': ModuleGeneratedEnergy.action_main
         },{
             'code': 3,
-            'title': 'Consumo',
+            'title': 'Consumo de energia',
             'action': ModuleConsumedEnergy.action_main
         },{
             'code': 4,
