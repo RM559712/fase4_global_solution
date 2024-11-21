@@ -83,8 +83,8 @@ class OpenWeather:
 
     Arguments:
     - str_city_state_country: Nome da cidade, sigla do estado/província e nome do país no formato [nome_cidade],[sigla_estado_província],[sigla_país] ( str )
-    - int_latitude: Latitude da região ( int )
-    - int_longitude: Longitude da região ( int )
+    - float_latitude: Latitude da região ( float )
+    - float_longitude: Longitude da região ( float )
    
     """
     def get_weather_data_by_location(self, str_city_state_country: str = None, float_latitude: float = 0.00, float_longitude: float = 0.00) -> dict:
@@ -122,8 +122,8 @@ class OpenWeather:
 
     Arguments:
     - str_city_state_country: Nome da cidade, sigla do estado/província e nome do país no formato [nome_cidade],[sigla_estado_província],[sigla_país] ( str )
-    - int_latitude: Latitude da região ( int )
-    - int_longitude: Longitude da região ( int )
+    - float_latitude: Latitude da região ( float )
+    - float_longitude: Longitude da região ( float )
    
     """
     def get_weather_forecast_data_by_location(self, str_city_state_country: str = None, float_latitude: float = 0.00, float_longitude: float = 0.00) -> dict:

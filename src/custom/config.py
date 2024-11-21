@@ -70,4 +70,13 @@ class Config:
         return dict_return
 
 
-    
+    def get_params_by_correios(self) -> dict:
+
+        dict_params = self.get_params()
+        if dict_params['status'] == False:
+            self.exception(dict_params['message'])
+
+        dict_return = dict_params['dict_data']['correios'] if 'correios' in dict_params['dict_data'] else {}
+        return dict_return
+
+

@@ -50,10 +50,11 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
     - Arquivo "params.json": Configurações do sistema em geral.
 
 3. <b>document</b>: Diretório para armazenamento de documentos relacionados ao sistema.
-    - <i>Pendente</i>
 
 4. <b>scripts</b>: Diretório para armazenamento de scripts.
     - Diretório "oracle": Diretório para armazenamento de scripts do banco de dados Oracle.
+    - Diretório "sensors": Diretório para armazenamento dos conteúdos relacionados aos sensores do sistema conforme exemplificado na plataforma Wokwi.
+        - Diretório "AICSS": <i>Pendente</i>
     - <i>Pendente</i>
 
 5. <b>src</b>: Diretório para armazenamento de código fonte do sistema em Python.

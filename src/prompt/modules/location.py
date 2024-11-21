@@ -6,8 +6,11 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import prompt.main as Main
+import pprint
+from custom.correios import Correios
 from custom.helper import Helper
 from models.f4_gs_location import F4GsLocation
+from models.f4_gs_location_address import F4GsLocationAddress
 
 """
 Método responsável pela exibição do cabeçalho do módulo
@@ -251,6 +254,251 @@ def validate_name(dict_data: dict = {}) -> str:
 
 
 """
+Método responsável pela formatação de visualização do CEP do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_cep(dict_data: dict = {}) -> str:
+
+    str_return = 'CEP: '
+    str_return += f'{str(dict_data['LAD_CEP']).rjust(8, '0')}' if 'LAD_CEP' in dict_data and type(dict_data['LAD_CEP']) != None and Helper.is_int(dict_data['LAD_CEP']) == True else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela validação do parâmetro "CEP"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def validate_cep(dict_data: dict = {}) -> int:
+
+    bool_is_update = ('LOC_ID' in dict_data and type(dict_data['LOC_ID']) == int)
+
+    str_label = f'Importante: Caso deseje manter o CEP atual ( abaixo ), basta ignorar o preenchimento.\n{format_data_view_cep(dict_data)}\n' if bool_is_update == True else ''
+    str_label += f'Informe o CEP em formato numérico ( ex.: 12345678 ): '
+    int_return = input(f'{str_label}')
+
+    object_correios = Correios()
+
+    while True:
+
+        try:
+
+            if bool_is_update == False and int_return.strip() == '':
+                raise Exception('Deve ser informado um CEP válido.')
+
+            if bool_is_update == False and Helper.is_int(int_return) == False: 
+                raise Exception('O conteúdo informado deve ser numérico ( ex.: 12345678 ).')
+
+            if int_return.strip() != '':
+
+                dict_address_data = object_correios.get_address_data_by_cep(int_cep = int(int_return.strip()))
+                if dict_address_data['status'] == False:
+                    raise Exception(dict_address_data['message'])
+
+            break
+
+        except Exception as error:
+
+            print(f'{error} Tente novamente: ', end = '')
+            int_return = input()
+
+    return int(int_return) if int_return.strip() != '' else None
+
+
+"""
+Método responsável pela formatação de visualização da rua do endereço do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_address_street(dict_data: dict = {}) -> str:
+
+    str_return = 'Rua: '
+    str_return += f'{dict_data['LAD_STREET'].strip()}' if 'LAD_STREET' in dict_data and type(dict_data['LAD_STREET']) != None and type(dict_data['LAD_STREET']) == str else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do número do endereço do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_address_number(dict_data: dict = {}) -> str:
+
+    str_return = 'Número: '
+    str_return += f'{dict_data['LAD_NUMBER'].strip()}' if 'LAD_NUMBER' in dict_data and type(dict_data['LAD_NUMBER']) != None and (type(dict_data['LAD_NUMBER']) == str or Helper.is_int(dict_data['LAD_NUMBER']) == True) else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela validação do parâmetro "Número"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def validate_address_number(dict_data: dict = {}) -> str:
+
+    bool_is_update = ('LOC_ID' in dict_data and type(dict_data['LOC_ID']) == int)
+
+    str_label = f'Importante: Caso deseje manter o número atual ( abaixo ), basta ignorar o preenchimento.\n{format_data_view_address_number(dict_data)}\n' if bool_is_update == True else ''
+    str_label += f'Informe o número: '
+    str_return = input(f'{str_label}')
+
+    while True:
+
+        try:
+
+            if bool_is_update == False and str_return.strip() == '':
+                raise Exception('Deve ser informado um número válido.')
+
+            break
+
+        except Exception as error:
+
+            print(f'{error} Tente novamente: ', end = '')
+            str_return = input()
+
+    return str(str_return.strip())
+
+
+"""
+Método responsável pela formatação de visualização do complemento do endereço do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_address_complement(dict_data: dict = {}) -> str:
+
+    str_return = 'Complemento: '
+    str_return += f'{dict_data['LAD_COMPLEMENT'].strip()}' if 'LAD_COMPLEMENT' in dict_data and type(dict_data['LAD_COMPLEMENT']) != None and type(dict_data['LAD_COMPLEMENT']) == str else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela validação do parâmetro "Complemento"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def validate_address_complement(dict_data: dict = {}) -> str:
+
+    bool_is_update = ('LOC_ID' in dict_data and type(dict_data['LOC_ID']) == int)
+
+    str_label = f'Importante: Caso deseje manter o complemento atual ( abaixo ), basta ignorar o preenchimento. Caso queira apagar o valor, digite "none".\n{format_data_view_address_complement(dict_data)}\n' if bool_is_update == True else ''
+    str_label += f'Informe o complemento: '
+    str_return = input(f'{str_label}')
+
+    while True:
+
+        try:
+
+            
+
+            break
+
+        except Exception as error:
+
+            print(f'{error} Tente novamente: ', end = '')
+            str_return = input()
+
+    if str_return.strip() == 'none': return ''
+    elif str_return.strip() == '': return None
+    else: return str_return.strip()
+
+
+"""
+Método responsável pela formatação de visualização do bairro do endereço do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_address_neighborhood(dict_data: dict = {}) -> str:
+
+    str_return = 'Bairro: '
+    str_return += f'{dict_data['LAD_NEIGHBORHOOD'].strip()}' if 'LAD_NEIGHBORHOOD' in dict_data and type(dict_data['LAD_NEIGHBORHOOD']) != None and type(dict_data['LAD_NEIGHBORHOOD']) == str else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização da cidade do endereço do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_address_city(dict_data: dict = {}) -> str:
+
+    str_return = 'Cidade: '
+    str_return += f'{dict_data['LAD_CITY'].strip()}' if 'LAD_CITY' in dict_data and type(dict_data['LAD_CITY']) != None and type(dict_data['LAD_CITY']) == str else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do estado do endereço do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_address_state(dict_data: dict = {}) -> str:
+
+    str_return = 'Estado: '
+    str_return += f'{dict_data['LAD_STATE'].strip()}' if 'LAD_STATE' in dict_data and type(dict_data['LAD_STATE']) != None and type(dict_data['LAD_STATE']) == str else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do endereço completo do módulo "Localização"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_full_address(dict_data: dict = {}) -> str:
+
+    str_return = 'Endereço: '
+
+    str_return += f'{dict_data['LAD_STREET'].strip()}, nº {dict_data['LAD_NUMBER'].strip()}'
+
+    if 'LAD_COMPLEMENT' in dict_data and type(dict_data['LAD_COMPLEMENT']) != None and type(dict_data['LAD_COMPLEMENT']) == str:
+        str_return += f', {dict_data['LAD_COMPLEMENT'].strip()}'
+
+    str_return += f', {dict_data['LAD_NEIGHBORHOOD'].strip()}, {dict_data['LAD_CITY'].strip()}, {dict_data['LAD_STATE'].strip()}, CEP {str(dict_data['LAD_CEP']).rjust(8, '0')}'
+
+    return str_return
+
+
+"""
 Método responsável pela formatação de visualização da data de cadastro do módulo "Localização"
 
 Arguments:
@@ -302,6 +550,7 @@ def format_data_view(dict_data: dict = {}, bool_show_id: bool = True, bool_show_
         str_return = ''
         str_return += f'- {format_data_view_id(dict_data)} \n' if bool_show_id == True else ''
         str_return += f'- {format_data_view_name(dict_data)} \n'
+        str_return += f'- {format_data_view_full_address(dict_data)} \n'
         str_return += f'- {format_data_view_insert_date(dict_data)} \n' if bool_show_insert_date == True else ''
         str_return += f'- {format_data_view_update_date(dict_data)} \n' if bool_show_update_date == True else ''
 
@@ -321,6 +570,11 @@ def action_list():
 
     object_f4gs_location = F4GsLocation()
 
+    object_f4gs_location.set_select(['LOC.*', 'LAD.*'])
+    object_f4gs_location.set_table('F4_GS_LOCATION LOC')
+    object_f4gs_location.set_join([
+        {'str_type_join': 'LEFT JOIN', 'str_table': 'F4_GS_LOCATION_ADDRESS LAD', 'str_where': 'LAD.LAD_LOC_ID = LOC.LOC_ID'},
+    ])
     object_f4gs_location.set_where([F4GsLocation.get_params_to_active_data()])
     object_f4gs_location.set_order([{'str_column': 'LOC_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_location.get_data().get_list()
@@ -339,6 +593,11 @@ def get_data_by_id(int_loc_id: int = 0) -> dict:
 
     object_f4gs_location = F4GsLocation()
 
+    object_f4gs_location.set_select(['LOC.*', 'LAD.*'])
+    object_f4gs_location.set_table('F4_GS_LOCATION LOC')
+    object_f4gs_location.set_join([
+        {'str_type_join': 'LEFT JOIN', 'str_table': 'F4_GS_LOCATION_ADDRESS LAD', 'str_where': 'LAD.LAD_LOC_ID = LOC.LOC_ID'},
+    ])
     object_f4gs_location.set_where([
 
         {'str_column': 'LOC_ID', 'str_type_where': '=', 'value': int_loc_id},
@@ -352,6 +611,28 @@ def get_data_by_id(int_loc_id: int = 0) -> dict:
         raise Exception(f'Nenhum registro foi localizado com o ID {int_loc_id}.')
 
     return object_f4gs_location
+
+
+"""
+Método responsável por executar a ação de retorno de dados de endereço de uma determinada localização
+"""
+def get_data_address_by_id(int_loc_id: int = 0) -> dict:
+
+    object_f4gs_location_address = F4GsLocationAddress()
+
+    object_f4gs_location_address.set_where([
+
+        {'str_column': 'LAD_LOC_ID', 'str_type_where': '=', 'value': int_loc_id},
+        F4GsLocationAddress.get_params_to_active_data()
+
+    ])
+
+    dict_data = object_f4gs_location_address.get_data().get_one()
+
+    if type(dict_data) == type(None):
+        raise Exception(f'Nenhum registro de endereço foi localizado com o ID {int_loc_id}.')
+
+    return object_f4gs_location_address
 
 
 # ... Demais parâmetros...
@@ -371,10 +652,48 @@ def action_insert():
 
     str_loc_name = validate_name()
 
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Os próximos parâmetros fazem parte do endereço da localização. O preenchimento é obrigatório.')
+    input(f'\nPressione <enter> para continuar...')
+
+    # -------
+    # Etapa 3
+    # -------
+
+    Main.init_step()
+
+    show_head_module()
+
+    int_lad_cep = validate_cep()
+
+    object_correios = Correios()
+
+    dict_address_data = object_correios.get_address_data_by_cep(int_cep = int_lad_cep)
+    if dict_address_data['status'] == False:
+        raise Exception(dict_address_data['message'])
+
+    print('')
+    print(Correios.format_data_view(dict_params = dict_address_data['dict_data']))
+
+    print('')
+
+    str_lad_number = validate_address_number()
+
+    print('')
+
+    str_lad_complement = validate_address_complement()
+
     Main.loading('Salvando dados, por favor aguarde...')
 
     # -------
-    # Etapa 2
+    # Etapa 4
     # -------
 
     Main.init_step()
@@ -389,6 +708,29 @@ def action_insert():
     object_f4gs_location.insert(dict_data)
 
     int_loc_id = object_f4gs_location.get_last_id()
+
+    # ------------------------------------------
+    # Processo de cadastro dos dados de endereço
+    # ------------------------------------------
+
+    dict_data_location_address = {}
+
+    dict_data_location_address['LAD_LOC_ID'] = int_loc_id
+
+    dict_data_location_address['LAD_CEP'] = int_lad_cep
+
+    dict_data_location_address['LAD_STREET'] = dict_address_data['dict_data']['logradouro']
+    dict_data_location_address['LAD_NUMBER'] = str_lad_number
+
+    if type(str_lad_complement) != type(None):
+        dict_data_location_address['LAD_COMPLEMENT'] = str_lad_complement
+
+    dict_data_location_address['LAD_NEIGHBORHOOD'] = dict_address_data['dict_data']['bairro']
+    dict_data_location_address['LAD_CITY'] = dict_address_data['dict_data']['localidade']
+    dict_data_location_address['LAD_STATE'] = dict_address_data['dict_data']['estado']
+
+    object_f4gs_location_address = F4GsLocationAddress()
+    object_f4gs_location_address.insert(dict_data_location_address)
 
     # Retorno de dados após o cadastro
     object_f4gs_location = get_data_by_id(int_loc_id)
@@ -447,6 +789,46 @@ def action_update():
 
     str_loc_name = validate_name(dict_data)
 
+    # -------
+    # Etapa 4
+    # -------
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Os próximos parâmetros fazem parte do endereço da localização. O preenchimento é obrigatório.')
+    input(f'\nPressione <enter> para continuar...')
+
+    # -------
+    # Etapa 3
+    # -------
+
+    Main.init_step()
+
+    show_head_module()
+
+    int_lad_cep = validate_cep(dict_data)
+
+    if Helper.is_int(int_lad_cep) == True:
+
+        object_correios = Correios()
+
+        dict_address_data = object_correios.get_address_data_by_cep(int_cep = int_lad_cep)
+        if dict_address_data['status'] == False:
+            raise Exception(dict_address_data['message'])
+
+        print('')
+        print(Correios.format_data_view(dict_params = dict_address_data['dict_data']))
+
+    print('')
+
+    str_lad_number = validate_address_number(dict_data)
+
+    print('')
+
+    str_lad_complement = validate_address_complement(dict_data)
+
     Main.loading('Salvando dados, por favor aguarde...')
 
     # -------
@@ -461,6 +843,29 @@ def action_update():
         dict_data['LOC_NAME'] = str_loc_name
 
     object_f4gs_location.update(dict_data)
+
+    # ---------------------------------------------
+    # Processo de atualização dos dados de endereço
+    # ---------------------------------------------
+
+    object_f4gs_location_address = get_data_address_by_id(int_loc_id)
+    dict_data_location_address = object_f4gs_location_address.get_one()
+
+    if Helper.is_int(int_lad_cep) == True:
+
+        dict_data_location_address['LAD_CEP'] = int_lad_cep
+        dict_data_location_address['LAD_STREET'] = dict_address_data['dict_data']['logradouro']
+        dict_data_location_address['LAD_NEIGHBORHOOD'] = dict_address_data['dict_data']['bairro']
+        dict_data_location_address['LAD_CITY'] = dict_address_data['dict_data']['localidade']
+        dict_data_location_address['LAD_STATE'] = dict_address_data['dict_data']['estado']
+
+    if str_lad_number.strip() != '':
+        dict_data_location_address['LAD_NUMBER'] = str_lad_number
+
+    if type(str_lad_complement) != type(None):
+        dict_data_location_address['LAD_COMPLEMENT'] = str_lad_complement
+
+    object_f4gs_location_address.update(dict_data_location_address)
 
     # Retorno de dados após as atualizações
     object_f4gs_location = get_data_by_id(int_loc_id)
