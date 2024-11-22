@@ -538,6 +538,9 @@ def action_list():
     object_f4gs_generated_energy.set_order([{'str_column': 'GNE_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_generated_energy.get_data().get_list()
 
+    if list_data == None:
+        raise Exception('Não existem energias cadastradas para essa localização.')
+
     for dict_data in list_data:
 
         print(format_data_view(dict_data))
@@ -576,6 +579,9 @@ def action_list_month_year():
     dict_data_by_month_year = object_f4gs_generated_energy.get_data_by_month_year(int_gne_loc_id = int_gne_loc_id)
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
+
+    if dict_data_by_month_year['list_data'] == None:
+        raise Exception('Não existem energias cadastradas para essa localização.')
 
     for dict_data in dict_data_by_month_year['list_data']:
 
@@ -619,8 +625,8 @@ def action_graphic_month_year():
     list_month_year = []
     list_value = []
 
-    """if len(dict_data_by_month_year['list_data']) == 0:
-        raise Exception('Não existem energias cadastradas para geração do gráfico.')"""
+    if dict_data_by_month_year['list_data'] == None:
+        raise Exception('Não existem energias cadastradas para essa localização.')
 
     for dict_data in dict_data_by_month_year['list_data']:
 
@@ -685,8 +691,8 @@ def action_list_balance_month_year():
     if dict_balance_by_month_year['status'] == False:
         raise Exception(dict_balance_by_month_year['message'])
 
-    if len(dict_balance_by_month_year['list_data']) == 0:
-        raise Exception('Não existem energias cadastradas para exibição de saldo.')
+    if dict_balance_by_month_year['list_data'] == None:
+        raise Exception('Não existem energias cadastradas para essa localização.')
 
     for dict_data in dict_balance_by_month_year['list_data']:
 
@@ -727,13 +733,13 @@ def action_graphic_balance_month_year():
     if dict_balance_by_month_year['status'] == False:
         raise Exception(dict_balance_by_month_year['message'])
 
+    if dict_balance_by_month_year['list_data'] == None:
+        raise Exception('Não existem energias cadastradas para essa localização.')
+
     list_month_year = []
     list_total_value_generated = []
     list_total_value_consumed = []
     list_total_value_balance = []
-
-    """if len(dict_balance_by_month_year['list_data']) == 0:
-        raise Exception('Não existem energias cadastradas para geração do gráfico.')"""
 
     for dict_data in dict_balance_by_month_year['list_data']:
 
@@ -815,8 +821,8 @@ def action_list_total_balance():
     if dict_total_balance['status'] == False:
         raise Exception(dict_total_balance['message'])
 
-    if len(dict_total_balance['list_data']) == 0:
-        raise Exception('Não existem energias cadastradas para exibição de saldo.')
+    if dict_total_balance['list_data'] == None:
+        raise Exception('Não existem energias cadastradas para essa localização.')
 
     for dict_data in dict_total_balance['list_data']:
 

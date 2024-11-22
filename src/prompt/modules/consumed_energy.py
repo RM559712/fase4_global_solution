@@ -437,6 +437,9 @@ def action_list():
     object_f4gs_consumed_energy.set_order([{'str_column': 'CNE_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_consumed_energy.get_data().get_list()
 
+    if list_data == None:
+        raise Exception('Não existem consumos cadastrados para essa localização.')
+
     for dict_data in list_data:
 
         print(format_data_view(dict_data))
@@ -475,6 +478,9 @@ def action_list_month_year():
     dict_data_by_month_year = object_f4gs_consumed_energy.get_data_by_month_year(int_cne_loc_id = int_cne_loc_id)
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
+
+    if dict_data_by_month_year['list_data'] == None:
+        raise Exception('Não existem consumos cadastrados para essa localização.')
 
     for dict_data in dict_data_by_month_year['list_data']:
 
@@ -515,8 +521,8 @@ def action_graphic_month_year():
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
 
-    """if len(dict_data_by_month_year['list_data']) == 0:
-        raise Exception('Não existem consumos cadastrados para geração do gráfico.')"""
+    if dict_data_by_month_year['list_data'] == None:
+        raise Exception('Não existem consumos cadastrados para essa localização.')
 
     list_month_year = []
     list_value = []

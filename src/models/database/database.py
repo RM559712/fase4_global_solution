@@ -96,9 +96,10 @@ class Database(OrmAbstract):
         return self
 
 
-    def get_list(self):
+    def get_list(self, bool_ignore_none_data: bool = False):
 
-        if type(self.data) == type(None):
+        ## > Importante: o status da variável "bool_ignore_none_data" é utilizado quando são executadas queries específicas, ou seja, queries desenvolvidas em formado DDL.
+        if bool_ignore_none_data == False and type(self.data) == type(None):
             self.get_data()
 
         return self.data

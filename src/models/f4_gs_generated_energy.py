@@ -131,7 +131,7 @@ class F4GsGeneratedEnergy(Database):
             
             """;
 
-            list_data = self.execute_query(str_sql_query).get_list()
+            list_data = self.execute_query(str_sql_query).get_list(True)
 
             dict_return['list_data'] = list_data
 
@@ -171,7 +171,7 @@ class F4GsGeneratedEnergy(Database):
 
             """;
 
-            list_data = self.execute_query(str_sql_query).get_list()
+            list_data = self.execute_query(str_sql_query).get_list(True)
 
             dict_return['list_data'] = list_data
 
