@@ -39,6 +39,7 @@ Algumas informações sobre os módulos dessa versão:
 - <strong>Módulo "Consumo de Energia"</strong>: Permite que sejam visualizadas informações referentes ao consumo de energia das localizações cadastradas. O usuário consegue visualizar relatórios e gráficos com informações como <i>logs</i> de data e quantidade de energia consumida e quantidade de energia consumida por mês e ano.
 - <strong>Módulo "Estatísticas de Consumo de Energia"</strong>: Permite que o relatório de estatísticas de consumo de energia seja executado (<i>Statistical Computing with R (SCR)</i>).
 
+
 ## 📁 Estrutura de pastas
 
 Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
@@ -78,7 +79,7 @@ Para essa versão não são solicitados parâmetros para acesso como por exemplo
 
 ## 🗃 Histórico de lançamentos
 
-* 1.0.0 - 21/11/2024
+* 1.0.0 - 25/11/2024
 
 ## 📋 Licença
 
