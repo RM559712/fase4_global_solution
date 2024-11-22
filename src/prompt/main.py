@@ -30,6 +30,16 @@ def get_current_path_dir() -> str:
 
 
 """
+Método responsável por retornar o diretório de execução de scripts do sistema
+"""
+def get_current_path_dir_scripts() -> str:
+
+    str_current_path_dir = get_current_path_dir()
+
+    return f'{os.path.dirname(str_current_path_dir)}{os.sep}scripts'
+
+
+"""
 Método responsável por executar o "reset" do bloco de comandos
 """
 def reset_commands():
@@ -109,10 +119,14 @@ def get_system_menu_options() -> list:
             'action': ModuleGeneratedEnergy.action_main
         },{
             'code': 3,
-            'title': 'Consumo de energia',
+            'title': 'Consumo de Energia',
             'action': ModuleConsumedEnergy.action_main
         },{
             'code': 4,
+            'title': 'Estatísticas de Consumo de Energia',
+            'action': ModuleEnergyStatistics.action_main
+        },{
+            'code': 5,
             'title': 'Sair',
             'action': action_exit
         }
@@ -221,10 +235,16 @@ import prompt.modules.location as ModuleLocation
 import prompt.modules.generated_energy as ModuleGeneratedEnergy
 
 # ---------------------------------------------------------------------------------------------------------------
-# Métodos referentes a opção "Consumo"
+# Métodos referentes a opção "Consumo de Energia"
 # ---------------------------------------------------------------------------------------------------------------
 
 import prompt.modules.consumed_energy as ModuleConsumedEnergy
+
+# ---------------------------------------------------------------------------------------------------------------
+# Métodos referentes a opção "Estatísticas de Consumo de Energia"
+# ---------------------------------------------------------------------------------------------------------------
+
+import prompt.modules.energy_statistics as ModuleEnergyStatistics
 
 # ... Demais módulos...
 

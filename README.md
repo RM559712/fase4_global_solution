@@ -36,7 +36,8 @@ Algumas informações sobre os módulos dessa versão:
 
 - <strong>Módulo "Localização"</strong>: Permite que sejam cadastradas as localizações que deverão ser administradas, como por exemplo residências, hotéis, prédios comerciais, empresas, etc.;
 - <strong>Módulo "Energia Limpa"</strong>: <i>Pendente</i>;
-- <strong>Módulo "Consumo"</strong>: <i>Pendente</i>;
+- <strong>Módulo "Consumo de Energia"</strong>: <i>Pendente</i>;
+- <strong>Módulo "Estatísticas de Consumo de Energia"</strong>: Permite que o relatório de estatísticas de consumo de energia seja executado (<i>Statistical Computing with R (SCR)</i>);
 
 ## 📁 Estrutura de pastas
 

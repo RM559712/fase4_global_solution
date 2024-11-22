@@ -1,0 +1,1 @@
+print('Exemplo de execução do relatório de estatísticas de consumo de energia.')
