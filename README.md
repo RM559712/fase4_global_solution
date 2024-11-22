@@ -38,6 +38,7 @@ Algumas informações sobre os módulos dessa versão:
 - <strong>Módulo "Energia Limpa"</strong>: Permite que sejam visualizadas informações referentes à geração de energia limpa das localizações cadastradas. O usuário consegue visualizar relatórios e gráficos com informações como <i>logs</i> de data e quantidade de energia gerada, quantidade de energia gerada por mês e ano, saldo de energia versus a quantidade de energia consumida por mês e ano e saldo total de energia gerada versus a quantidade de energia consumida.
 - <strong>Módulo "Consumo de Energia"</strong>: Permite que sejam visualizadas informações referentes ao consumo de energia das localizações cadastradas. O usuário consegue visualizar relatórios e gráficos com informações como <i>logs</i> de data e quantidade de energia consumida e quantidade de energia consumida por mês e ano.
 - <strong>Módulo "Estatísticas de Consumo de Energia"</strong>: Permite que o relatório de estatísticas de consumo de energia seja executado (<i>Statistical Computing with R (SCR)</i>).
+- <strong>Módulo "Sensores"</strong>: Permite que sejam cadastrados diferentes sensores com seus códigos de série e associados aos possíveis tipos "Sensor de Presença" e "Sensor de Movimento".
 
 
 ## 📁 Estrutura de pastas
