@@ -34,10 +34,10 @@ Essa versão possui funcionalidades que auxiliam na administração de energia l
 
 Algumas informações sobre os módulos dessa versão:
 
-- <strong>Módulo "Localização"</strong>: Permite que sejam cadastradas as localizações que deverão ser administradas, como por exemplo residências, hotéis, prédios comerciais, empresas, etc.;
-- <strong>Módulo "Energia Limpa"</strong>: <i>Pendente</i>;
-- <strong>Módulo "Consumo de Energia"</strong>: <i>Pendente</i>;
-- <strong>Módulo "Estatísticas de Consumo de Energia"</strong>: Permite que o relatório de estatísticas de consumo de energia seja executado (<i>Statistical Computing with R (SCR)</i>);
+- <strong>Módulo "Localização"</strong>: Permite que sejam cadastradas as localizações que deverão ser administradas, como por exemplo residências, hotéis, prédios comerciais, empresas, etc. Dessa forma, será possível administrar a energia limpa gerada em diferentes localizações conforme necessidade do usuário.
+- <strong>Módulo "Energia Limpa"</strong>: Permite que sejam visualizadas informações referentes à geração de energia limpa das localizações cadastradas. O usuário consegue visualizar relatórios e gráficos com informações como <i>logs</i> de data e quantidade de energia gerada, quantidade de energia gerada por mês e ano, saldo de energia versus a quantidade de energia consumida por mês e ano e saldo total de energia gerada versus a quantidade de energia consumida.
+- <strong>Módulo "Consumo de Energia"</strong>: Permite que sejam visualizadas informações referentes ao consumo de energia das localizações cadastradas. O usuário consegue visualizar relatórios e gráficos com informações como <i>logs</i> de data e quantidade de energia consumida e quantidade de energia consumida por mês e ano.
+- <strong>Módulo "Estatísticas de Consumo de Energia"</strong>: Permite que o relatório de estatísticas de consumo de energia seja executado (<i>Statistical Computing with R (SCR)</i>).
 
 ## 📁 Estrutura de pastas
 
@@ -51,12 +51,14 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
     - Arquivo "params.json": Configurações do sistema em geral.
 
 3. <b>document</b>: Diretório para armazenamento de documentos relacionados ao sistema.
+    - Diretório "AIC": <i>Pendente</i>
 
 4. <b>scripts</b>: Diretório para armazenamento de scripts.
+    - Diretório "CDS": Diretório para armazenamento de scripts relacionados às tabelas contendo dados de consumo de energia nos últimos anos (<i>Cognitive Data Science (CDS)</i>).
     - Diretório "oracle": Diretório para armazenamento de scripts do banco de dados Oracle.
+    - Diretório "SCR": Diretório para armazenamento do relatório de consumo de energia (<i>Statistical Computing with R (SCR)</i>);
     - Diretório "sensors": Diretório para armazenamento dos conteúdos relacionados aos sensores do sistema conforme exemplificado na plataforma Wokwi.
         - Diretório "AICSS": <i>Pendente</i>
-    - <i>Pendente</i>
 
 5. <b>src</b>: Diretório para armazenamento de código fonte do sistema em Python.
     - Diretório "custom": Diretório para armazenamento <i>classes/componentes</i> auxiliares do sistema.
