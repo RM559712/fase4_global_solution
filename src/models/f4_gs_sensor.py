@@ -5,7 +5,7 @@ class F4GsSensor(Database):
 
     # Constantes referentes aos tipos de sensores
     TYPE_PRESENCE = 1
-    TYPE_MOTION = 2
+    TYPE_LIGHT = 2
 
     def __init__(self, object_database = None):
 
@@ -39,8 +39,8 @@ class F4GsSensor(Database):
                 'code': F4GsSensor.TYPE_PRESENCE,
                 'title': 'Sensor de Presença'
             },{
-                'code': F4GsSensor.TYPE_MOTION,
-                'title': 'Sensor de Movimento'
+                'code': F4GsSensor.TYPE_LIGHT,
+                'title': 'Sensor de Luminosidade'
             }
         ]
 
