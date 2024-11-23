@@ -6,6 +6,8 @@ import sys
 # > Importante: A definição abaixo referente ao diretório raiz deve ser efetuada antes das importações de arquivos do sistema.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
+import matplotlib.pyplot as Pyplot
+import mplcursors
 import prompt.main as Main
 import prompt.modules.sensor as ModuleSensor
 from custom.helper import Helper
@@ -55,10 +57,26 @@ def get_menu_options() -> list:
             'action': action_list
         },{
             'code': 2,
+            'title': 'Visualizar logs por dia, mês e ano',
+            'action': action_list_day_month_year
+        },{
+            'code': 3,
+            'title': 'Visualizar gráfico de logs por dia, mês e ano',
+            'action': action_graphic_day_month_year
+        },{
+            'code': 4,
+            'title': 'Visualizar logs por mês e ano',
+            'action': action_list_month_year
+        },{
+            'code': 5,
+            'title': 'Visualizar gráfico de logs por mês e ano',
+            'action': action_graphic_month_year
+        },{
+            'code': 6,
             'title': 'Cadastrar',
             'action': action_insert
         },{
-            'code': 3,
+            'code': 7,
             'title': 'Voltar ao menu principal',
             'action': Main.init_system
         }
@@ -286,6 +304,38 @@ def format_data_view_insert_date(dict_data: dict = {}) -> str:
 
 
 """
+Método responsável pela formatação de visualização da quantidade total do módulo "Log de Execução de Sensores"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_quantity(dict_data: dict = {}) -> str:
+
+    str_return = 'Total de execuções: '
+    str_return += f'{dict_data['SLE_QUANTITY']}' if 'SLE_QUANTITY' in dict_data and type(dict_data['SLE_QUANTITY']) != None and Helper.is_float(dict_data['SLE_QUANTITY']) == True else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do valor total do módulo "Log de Execução de Sensores"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_total_value(dict_data: dict = {}) -> str:
+
+    str_return = 'Valor total de energia consumida: '
+    str_return += f'{dict_data['SLE_TOTAL_VALUE']} kWh' if 'SLE_TOTAL_VALUE' in dict_data and type(dict_data['SLE_TOTAL_VALUE']) != None and Helper.is_float(dict_data['SLE_TOTAL_VALUE']) == True else 'N/I'
+
+    return str_return
+
+
+"""
 Método responsável pela formatação de visualização de dados do módulo "Log de Execução de Sensores"
 
 Arguments:
@@ -311,6 +361,82 @@ def format_data_view(dict_data: dict = {}, bool_show_id: bool = True, bool_show_
 
 
 """
+Método responsável pela formatação de visualização do dia, mês e ano do módulo "Log de Execução de Sensores"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_insert_date_day_month_year(dict_data: dict = {}) -> str:
+
+    str_return = 'Dia, mês e ano: '
+    str_return += f'{dict_data['SLE_INSERT_DATE_DAY_MONTH_YEAR']}' if 'SLE_INSERT_DATE_DAY_MONTH_YEAR' in dict_data and type(dict_data['SLE_INSERT_DATE_DAY_MONTH_YEAR']) != None else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização do mês e ano do módulo "Log de Execução de Sensores"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_insert_date_month_year(dict_data: dict = {}) -> str:
+
+    str_return = 'Mês e ano: '
+    str_return += f'{dict_data['SLE_INSERT_DATE_MONTH_YEAR']}' if 'SLE_INSERT_DATE_MONTH_YEAR' in dict_data and type(dict_data['SLE_INSERT_DATE_MONTH_YEAR']) != None else 'N/I'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização de dados agrupados por dia, mês e ano do módulo "Log de Execução de Sensores"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_day_month_year(dict_data: dict = {}) -> str:
+
+    str_return = None
+
+    if len(dict_data) > 0:
+
+        str_return = ''
+        str_return += f'- {format_data_view_quantity(dict_data)} \n'
+        str_return += f'- {format_data_view_total_value(dict_data)} \n'
+        str_return += f'- {format_data_view_insert_date_day_month_year(dict_data)} \n'
+
+    return str_return
+
+
+"""
+Método responsável pela formatação de visualização de dados agrupados por mês e ano do módulo "Log de Execução de Sensores"
+
+Arguments:
+- dict_data: Dict contendo os dados conforme retorno do banco de dados ( dictionary )
+
+Return: str
+"""
+def format_data_view_month_year(dict_data: dict = {}) -> str:
+
+    str_return = None
+
+    if len(dict_data) > 0:
+
+        str_return = ''
+        str_return += f'- {format_data_view_quantity(dict_data)} \n'
+        str_return += f'- {format_data_view_total_value(dict_data)} \n'
+        str_return += f'- {format_data_view_insert_date_month_year(dict_data)} \n'
+
+    return str_return
+
+
+"""
 Método responsável pela exibição de cadastros do módulo "Log de Execução de Sensores"
 """
 def action_list():
@@ -321,6 +447,21 @@ def action_list():
 
     show_head_module()
 
+    print('Os dados serão exibidos de acordo com o sensor informado.')
+    print('')
+
+    int_sle_sns_id = validate_sensor_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
     object_f4gs_sensor_log_execution = F4GsSensorLogExecution()
 
     object_f4gs_sensor_log_execution.set_select(['SLE.*', 'SNS.SNS_NAME'])
@@ -328,7 +469,10 @@ def action_list():
     object_f4gs_sensor_log_execution.set_join([
         {'str_type_join': 'INNER JOIN', 'str_table': 'F4_GS_SENSOR SNS', 'str_where': 'SNS.SNS_ID = SLE.SLE_SNS_ID'}
     ])
-    object_f4gs_sensor_log_execution.set_where([F4GsSensorLogExecution.get_params_to_active_data()])
+    object_f4gs_sensor_log_execution.set_where([
+        F4GsSensorLogExecution.get_params_to_active_data(),
+        F4GsSensorLogExecution.get_params_to_sensor(int_sle_sns_id)
+    ])
     object_f4gs_sensor_log_execution.set_order([{'str_column': 'SLE.SLE_ID', 'str_type_order': 'ASC'}])
     list_data = object_f4gs_sensor_log_execution.get_data().get_list()
 
@@ -336,6 +480,262 @@ def action_list():
 
         print(format_data_view(dict_data))
     
+    require_reload()
+
+
+"""
+Método responsável pela exibição de logs por dia, mês e ano do módulo "Log de Execução de Sensores"
+"""
+def action_list_day_month_year():
+
+    Main.init_step()
+
+    validate_exists_data()
+
+    show_head_module()
+
+    print('Os dados serão exibidos de acordo com o sensor informado.')
+    print('')
+
+    int_sle_sns_id = validate_sensor_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
+    object_f4gs_sensor_log_execution = F4GsSensorLogExecution()
+
+    dict_data_by_day_month_year = object_f4gs_sensor_log_execution.get_data_by_day_month_year(int_sle_sns_id = int_sle_sns_id)
+    if dict_data_by_day_month_year['status'] == False:
+        raise Exception(dict_data_by_day_month_year['message'])
+
+    if dict_data_by_day_month_year['list_data'] == None:
+        raise Exception('Não existem logs cadastrados para esse sensor.')
+
+    for dict_data in dict_data_by_day_month_year['list_data']:
+
+        print(format_data_view_day_month_year(dict_data))
+
+    require_reload()
+
+
+"""
+Método responsável pela exibição de gráficos logs por dia, mês e ano do módulo "Log de Execução de Sensores"
+"""
+def action_graphic_day_month_year():
+
+    Main.init_step()
+
+    validate_exists_data()
+
+    show_head_module()
+
+    print('Os dados serão exibidos de acordo com o sensor informado.')
+    print('')
+
+    int_sle_sns_id = validate_sensor_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
+    object_f4gs_sensor_log_execution = F4GsSensorLogExecution()
+
+    dict_data_by_day_month_year = object_f4gs_sensor_log_execution.get_data_by_day_month_year(str_order = 'ASC', int_sle_sns_id = int_sle_sns_id)
+    if dict_data_by_day_month_year['status'] == False:
+        raise Exception(dict_data_by_day_month_year['message'])
+
+    if dict_data_by_day_month_year['list_data'] == None:
+        raise Exception('Não existem logs cadastrados para esse sensor.')
+
+    list_day_month_year = []
+    list_quantity = []
+    list_value = []
+
+    for dict_data in dict_data_by_day_month_year['list_data']:
+
+        list_day_month_year.append(dict_data['SLE_INSERT_DATE_DAY_MONTH_YEAR'])
+        list_quantity.append(dict_data['SLE_QUANTITY'])
+        list_value.append(dict_data['SLE_TOTAL_VALUE'])
+
+    for xi, yi, str_title in zip(list_day_month_year, list_quantity, list_quantity):
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#1C83EA', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+    
+    for xi, yi, str_title in zip(list_day_month_year, list_value, list_value):
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#E31414', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+
+    object_line1, = Pyplot.plot(list_day_month_year, list_quantity, marker = 'o', label = 'Total de execuções', color = '#1C83EA', markevery = 1)
+    object_line2, = Pyplot.plot(list_day_month_year, list_value, marker = 'o', label = 'Valor total consumido', color = '#E31414', markevery = 1)
+    Pyplot.title("Log de execuções por dia, mês e ano")
+    Pyplot.xlabel("Dia, mês e ano")
+    Pyplot.ylabel("Energia exibida em kWh")
+    Pyplot.legend()
+    Pyplot.grid(True, linestyle = ':')
+
+    """object_cursor = mplcursors.cursor([object_line1], hover = True)
+    object_cursor.connect('add', lambda sel: sel.annotation.set_text(
+        f'Total: {sel.target[1]:.0f}'
+    ))
+
+    object_cursor = mplcursors.cursor([object_line2], hover = True)
+    object_cursor.connect('add', lambda sel: sel.annotation.set_text(
+        f'{sel.target[1]} kWh'
+    ))"""
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Visualizando gráfico...')
+
+    Pyplot.show()
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Gráfico gerado e visualizado com sucesso.')
+
+    require_reload()
+
+
+"""
+Método responsável pela exibição de logs por mês e ano do módulo "Log de Execução de Sensores"
+"""
+def action_list_month_year():
+
+    Main.init_step()
+
+    validate_exists_data()
+
+    show_head_module()
+
+    print('Os dados serão exibidos de acordo com o sensor informado.')
+    print('')
+
+    int_sle_sns_id = validate_sensor_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
+    object_f4gs_sensor_log_execution = F4GsSensorLogExecution()
+
+    dict_data_by_month_year = object_f4gs_sensor_log_execution.get_data_by_month_year(int_sle_sns_id = int_sle_sns_id)
+    if dict_data_by_month_year['status'] == False:
+        raise Exception(dict_data_by_month_year['message'])
+
+    if dict_data_by_month_year['list_data'] == None:
+        raise Exception('Não existem logs cadastrados para esse sensor.')
+
+    for dict_data in dict_data_by_month_year['list_data']:
+
+        print(format_data_view_month_year(dict_data))
+
+    require_reload()
+
+
+"""
+Método responsável pela exibição de gráficos logs por mês e ano do módulo "Log de Execução de Sensores"
+"""
+def action_graphic_month_year():
+
+    Main.init_step()
+
+    validate_exists_data()
+
+    show_head_module()
+
+    print('Os dados serão exibidos de acordo com o sensor informado.')
+    print('')
+
+    int_sle_sns_id = validate_sensor_id()
+
+    # -------
+    # Etapa 2
+    # -------
+
+    Main.loading('Carregando dados, por favor aguarde...')
+
+    Main.init_step()
+
+    show_head_module()
+
+    object_f4gs_sensor_log_execution = F4GsSensorLogExecution()
+
+    dict_data_by_month_year = object_f4gs_sensor_log_execution.get_data_by_month_year(str_order = 'ASC', int_sle_sns_id = int_sle_sns_id)
+    if dict_data_by_month_year['status'] == False:
+        raise Exception(dict_data_by_month_year['message'])
+
+    if dict_data_by_month_year['list_data'] == None:
+        raise Exception('Não existem logs cadastrados para esse sensor.')
+
+    list_month_year = []
+    list_quantity = []
+    list_value = []
+
+    for dict_data in dict_data_by_month_year['list_data']:
+
+        list_month_year.append(dict_data['SLE_INSERT_DATE_MONTH_YEAR'])
+        list_quantity.append(dict_data['SLE_QUANTITY'])
+        list_value.append(dict_data['SLE_TOTAL_VALUE'])
+
+    for xi, yi, str_title in zip(list_month_year, list_quantity, list_quantity):
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#1C83EA', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+    
+    for xi, yi, str_title in zip(list_month_year, list_value, list_value):
+        Pyplot.annotate(f'{str_title} kWh', (xi, yi), color = '#E31414', fontsize = 8, textcoords = 'offset points', xytext = (0, 10), ha = 'center')
+
+    object_line1, = Pyplot.plot(list_month_year, list_quantity, marker = 'o', label = 'Total de execuções', color = '#1C83EA', markevery = 1)
+    object_line2, = Pyplot.plot(list_month_year, list_value, marker = 'o', label = 'Valor total consumido', color = '#E31414', markevery = 1)
+    Pyplot.title("Log de execuções por mês e ano")
+    Pyplot.xlabel("Mês e ano")
+    Pyplot.ylabel("Energia exibida em kWh")
+    Pyplot.legend()
+    Pyplot.grid(True, linestyle = ':')
+
+    """object_cursor = mplcursors.cursor([object_line1], hover = True)
+    object_cursor.connect('add', lambda sel: sel.annotation.set_text(
+        f'Total: {sel.target[1]:.0f}'
+    ))
+
+    object_cursor = mplcursors.cursor([object_line2], hover = True)
+    object_cursor.connect('add', lambda sel: sel.annotation.set_text(
+        f'{sel.target[1]} kWh'
+    ))"""
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Visualizando gráfico...')
+
+    Pyplot.show()
+
+    Main.init_step()
+
+    show_head_module()
+
+    print('Gráfico gerado e visualizado com sucesso.')
+
     require_reload()
 
 

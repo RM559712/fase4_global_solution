@@ -1,5 +1,6 @@
 import datetime
 import os
+import pprint
 import sys
 
 # > Importante: A definição abaixo referente ao diretório raiz deve ser efetuada antes das importações de arquivos do sistema.
@@ -7,7 +8,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 import matplotlib.pyplot as Pyplot
 import mplcursors
-import pprint
 import prompt.main as Main
 import prompt.modules.location as ModuleLocation
 from custom.helper import Helper
@@ -551,7 +551,7 @@ def action_list():
 
 
 """
-Método responsável pela exibição de cadastros do módulo "Energia Limpa"
+Método responsável pela exibição de cadastros por mês e ano do módulo "Energia Limpa"
 """
 def action_list_month_year():
 
@@ -593,7 +593,7 @@ def action_list_month_year():
 
 
 """
-Método responsável pela exibição de gráficos do módulo "Energia Limpa"
+Método responsável pela exibição de gráficos por mês e ano do módulo "Energia Limpa"
 """
 def action_graphic_month_year():
 
@@ -624,11 +624,11 @@ def action_graphic_month_year():
     if dict_data_by_month_year['status'] == False:
         raise Exception(dict_data_by_month_year['message'])
 
-    list_month_year = []
-    list_value = []
-
     if dict_data_by_month_year['list_data'] == None:
         raise Exception('Não existem energias cadastradas para essa localização.')
+
+    list_month_year = []
+    list_value = []
 
     for dict_data in dict_data_by_month_year['list_data']:
 
@@ -769,8 +769,8 @@ def action_graphic_balance_month_year():
     Pyplot.legend()
     Pyplot.grid(True, linestyle = ':')
 
-    cursor = mplcursors.cursor([object_line1, object_line2, object_line3], hover = True)
-    cursor.connect('add', lambda sel: sel.annotation.set_text(
+    object_cursor = mplcursors.cursor([object_line1, object_line2, object_line3], hover = True)
+    object_cursor.connect('add', lambda sel: sel.annotation.set_text(
         f'{sel.target[1]:.2f} kWh'
     ))
 

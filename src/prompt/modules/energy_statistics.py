@@ -1,5 +1,6 @@
 import datetime
 import os
+import pprint
 import subprocess
 import sys
 
@@ -7,7 +8,6 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import prompt.main as Main
-import pprint
 from custom.correios import Correios
 from custom.helper import Helper
 from models.f4_gs_location import F4GsLocation
