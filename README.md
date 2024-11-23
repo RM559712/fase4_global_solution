@@ -39,7 +39,7 @@ Algumas informações sobre os módulos dessa versão:
 - <strong>Módulo "Consumo de Energia"</strong>: Permite que sejam visualizadas informações referentes ao consumo de energia das localizações cadastradas. O usuário consegue visualizar relatórios e gráficos com informações como <i>logs</i> de data e quantidade de energia consumida e quantidade de energia consumida por mês e ano.
 - <strong>Módulo "Estatísticas de Consumo de Energia"</strong>: Permite que o relatório de estatísticas de consumo de energia seja executado (<i>Statistical Computing with R (SCR)</i>).
 - <strong>Módulo "Sensores"</strong>: Permite que sejam cadastrados diferentes sensores com seus códigos de série e associados aos possíveis tipos "Sensor de Presença" e "Sensor de Luminosidade" (<i>Artificial Intelligence with Computer Systems and Sensors (AICSS)</i>).
-
+- <strong>Módulo "Log de Execução de Sensores"</strong>: Permite que sejam visualizadas informações referentes à execução dos sensores. O usuário consegue visualizar relatórios e gráficos com informações como <i>logs</i> de data e quantidade de energia consumida e quantidade de execuções e seus respectivos consumos de energia por data (<i>Artificial Intelligence with Computer Systems and Sensors (AICSS)</i>).
 
 ## 📁 Estrutura de pastas
 

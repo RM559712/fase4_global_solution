@@ -131,6 +131,10 @@ def get_system_menu_options() -> list:
             'action': ModuleSensor.action_main
         },{
             'code': 6,
+            'title': 'Log de Execução de Sensores',
+            'action': ModuleSensorLogExecution.action_main
+        },{
+            'code': 7,
             'title': 'Sair',
             'action': action_exit
         }
@@ -255,6 +259,12 @@ import prompt.modules.energy_statistics as ModuleEnergyStatistics
 # ---------------------------------------------------------------------------------------------------------------
 
 import prompt.modules.sensor as ModuleSensor
+
+# ---------------------------------------------------------------------------------------------------------------
+# Métodos referentes a opção "Log de Execução de Sensores"
+# ---------------------------------------------------------------------------------------------------------------
+
+import prompt.modules.sensor_log_execution as ModuleSensorLogExecution
 
 # ... Demais módulos...
 
