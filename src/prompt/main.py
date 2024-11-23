@@ -130,7 +130,7 @@ def get_system_menu_options() -> list:
             'title': 'Sensores',
             'action': ModuleSensor.action_main
         },{
-            'code': 5,
+            'code': 6,
             'title': 'Sair',
             'action': action_exit
         }

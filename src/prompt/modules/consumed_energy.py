@@ -16,7 +16,7 @@ Método responsável pela exibição do cabeçalho do módulo
 """
 def show_head_module():
 
-    print('-= Consumo =-')
+    print('-= Consumo de Energia =-')
     print('')
 
 
@@ -48,6 +48,16 @@ Return: list
 """
 def get_menu_options() -> list:
 
+    """{
+        'code': ,
+        'title': 'Editar consumo de energia',
+        'action': action_update
+    },{
+        'code': ,
+        'title': 'Excluir consumo de energia',
+        'action': action_delete
+    }"""
+
     return [
         {
             'code': 1,
@@ -67,14 +77,6 @@ def get_menu_options() -> list:
             'action': action_insert
         },{
             'code': 5,
-            'title': 'Editar consumo de energia',
-            'action': action_update
-        },{
-            'code': 6,
-            'title': 'Excluir consumo de energia',
-            'action': action_delete
-        },{
-            'code': 7,
             'title': 'Voltar ao menu principal',
             'action': Main.init_system
         }

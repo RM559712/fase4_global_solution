@@ -50,6 +50,16 @@ Return: list
 """
 def get_menu_options() -> list:
 
+    """{
+        'code': ,
+        'title': 'Editar energia gerada',
+        'action': action_update
+    },{
+        'code': ,
+        'title': 'Excluir energia gerada',
+        'action': action_delete
+    }"""
+
     return [
         {
             'code': 1,
@@ -81,14 +91,6 @@ def get_menu_options() -> list:
             'action': action_insert
         },{
             'code': 8,
-            'title': 'Editar energia gerada',
-            'action': action_update
-        },{
-            'code': 9,
-            'title': 'Excluir energia gerada',
-            'action': action_delete
-        },{
-            'code': 10,
             'title': 'Voltar ao menu principal',
             'action': Main.init_system
         }
