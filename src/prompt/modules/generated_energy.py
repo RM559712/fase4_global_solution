@@ -689,7 +689,7 @@ def action_list_balance_month_year():
 
     object_f4gs_generated_energy = F4GsGeneratedEnergy()
 
-    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(str_order = 'ASC', int_gne_loc_id = int_gne_loc_id)
+    dict_balance_by_month_year = object_f4gs_generated_energy.get_balance_by_month_year(int_gne_loc_id = int_gne_loc_id)
     if dict_balance_by_month_year['status'] == False:
         raise Exception(dict_balance_by_month_year['message'])
 
