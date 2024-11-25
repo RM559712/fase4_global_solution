@@ -67,7 +67,7 @@ void loop() {
 
     // Acende o LEDLight se o objeto estiver a uma distância menor que 20 cm
     if (isDistance == true) {
-        Serial.println("Objeto detectado! Lampada externa ligada.");
+        Serial.println("Objeto se aproximando! Lampada externa ligada!");
         digitalWrite(pinLED, HIGH);
     } else {
         Serial.println("Nenhum objeto próximo. Lampada externa desligada.");
@@ -116,15 +116,15 @@ void loop() {
     if (lux < 10) { // Está escuro
         if (pirState == HIGH) { // Corpo detectado
             digitalWrite(pinLEDLightHome, HIGH); // Liga o LED
-            Serial.println("Corpo detectado! Lampada ligada.");
+            Serial.println("Movimento detectado! Lampada interna ligada.");
         } else { 
             digitalWrite(pinLEDLightHome, LOW); // Desliga o LED
-            Serial.println("Sem movimento. Lampada desligada.");
+            Serial.println("Sem movimento. Lampada interna desligada.");
         }
     } else { 
         // Está claro, desliga o LED independentemente do movimento
         digitalWrite(pinLEDLightHome, LOW);
-        Serial.println("Está claro. Lampada desligada.");
+        Serial.println("Está claro. Lampada interna desligada.");
     }
 
    

@@ -55,7 +55,7 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
 
 4. <b>scripts</b>: Diretório para armazenamento de scripts.
     - Diretório "oracle": Diretório para armazenamento de scripts do banco de dados Oracle.
-    - Diretório "[SCR](https://github.com/RM559712/fase4_global_solution/tree/main/scripts/SCR)": Diretório para armazenamento do relatório de consumo de energia, incluindo documentação sobre o relatório gerado (<i>Statistical Computing with R (SCR)</i>);
+    - Diretório "[SCR](https://github.com/RM559712/fase4_global_solution/tree/main/scripts/SCR)": Diretório para armazenamento da análise de consumo de energia, incluindo documentação sobre a análise gerada (<i>Statistical Computing with R (SCR)</i>);
         - Diretório "Gráficos - Análises em R": Diretório para armazenamento das imagens dos gráficos gerados;
     - Diretório "sensors": Diretório para armazenamento dos conteúdos relacionados aos sensores do sistema conforme exemplificado na plataforma Wokwi.
         - Diretório "[AICSS](https://github.com/RM559712/fase4_global_solution/tree/main/scripts/sensors/AICSS)": Diretório para armazenamento do componente, incluindo documentação (<i>Artificial Intelligence with Computer Systems and Sensors (AICSS)</i>).
