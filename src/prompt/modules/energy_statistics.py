@@ -8,10 +8,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import prompt.main as Main
-from custom.correios import Correios
 from custom.helper import Helper
-from models.f4_gs_location import F4GsLocation
-from models.f4_gs_location_address import F4GsLocationAddress
 
 """
 Método responsável pela exibição do cabeçalho do módulo
@@ -21,29 +18,18 @@ def show_head_module():
     print('-= Estatísticas de Consumo de Energia =-')
     print('')
 
-"""
-Método responsável por verificar se existem localizações cadastradas
-"""
-def validate_exists_data():
-
-    object_f4gs_location = F4GsLocation()
-    bool_exists_data = object_f4gs_location.validate_exists_data()
-
-    if bool_exists_data == False:
-        raise Exception('Não existem localizações cadastradas.')
-
 
 """
-Método responsável por recarregar o módulo "Localização"
+Método responsável por recarregar o módulo "Estatísticas de Consumo de Energia"
 """
 def require_reload():
 
-    input(f'\nPressione <enter> para voltar ao menu do módulo "Localização"...')
+    input(f'\nPressione <enter> para voltar ao menu do módulo "Estatísticas de Consumo de Energia"...')
     action_main()
 
 
 """
-Método responsável por retornar as opções de menu do módulo "Localização"
+Método responsável por retornar as opções de menu do módulo "Estatísticas de Consumo de Energia"
 
 Return: list
 """
@@ -63,7 +49,7 @@ def get_menu_options() -> list:
 
 
 """
-Método responsável por retornar os códigos das opções de menu do módulo "Localização"
+Método responsável por retornar os códigos das opções de menu do módulo "Estatísticas de Consumo de Energia"
 
 Return: list
 """
@@ -80,7 +66,7 @@ def get_menu_options_codes() -> list:
 
 
 """
-Método responsável pela validação do parâmetro "Opção do menu" do módulo "Localização"
+Método responsável pela validação do parâmetro "Opção do menu" do módulo "Estatísticas de Consumo de Energia"
 
 Return: str
 """
@@ -132,8 +118,6 @@ def action_list_statistics_r():
 
     Main.init_step()
 
-    validate_exists_data()
-
     show_head_module()
 
     str_current_dir_path_scripts = Main.get_current_path_dir_scripts()
@@ -150,7 +134,7 @@ def action_list_statistics_r():
 
 
 """
-Método responsável pela exibição padrão do módulo "Localização"
+Método responsável pela exibição padrão do módulo "Estatísticas de Consumo de Energia"
 """
 def action_main():
 
