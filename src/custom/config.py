@@ -21,6 +21,7 @@ class Config:
 
     def get_system_path_dir(self) -> str:
 
+        # Direcionamento para "custom > src > ..."
         return os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 
